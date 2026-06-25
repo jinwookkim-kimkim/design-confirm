@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>디자인 결재 관리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f1;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-hint: #9b9b96;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --sidebar-w: 220px;
+    --header-h: 56px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 100;
+    gap: 12px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    text-decoration: none;
+    width: var(--sidebar-w);
+  }
+  .logo-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: #1a1a18;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 15px;
+  }
+  .header-center { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .search-wrap {
+    position: relative; max-width: 320px; flex: 1;
+  }
+  .search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-hint); font-size: 15px; }
+  .search-wrap input {
+    width: 100%; padding: 7px 12px 7px 32px;
+    border: 0.5px solid var(--border); border-radius: var(--radius-md);
+    background: var(--surface2); font-size: 13px; color: var(--text);
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--border-md); background: var(--surface); }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #EEEDFE; color: #3C3489;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: flex;
+    margin-top: var(--header-h);
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  /* ── Sidebar ── */
+  aside {
+    position: fixed;
+    top: var(--header-h); left: 0;
+    width: var(--sidebar-w);
+    height: calc(100vh - var(--header-h));
+    background: var(--surface);
+    border-right: 0.5px solid var(--border);
+    padding: 16px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+    overflow-y: auto;
+  }
+  .nav-section { font-size: 11px; font-weight: 600; color: var(--text-hint); letter-spacing: 0.06em; padding: 10px 8px 4px; text-transform: uppercase; }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: var(--radius-md);
+    font-size: 13px; color: var(--text-muted);
+    cursor: pointer; text-decoration: none;
+    transition: background 0.1s, color 0.1s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); color: var(--text); font-weight: 500; }
+  .nav-item i { font-size: 16px; width: 18px; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto; font-size: 11px; font-weight: 600;
+    padding: 1px 7px; border-radius: 99px;
+    background: #FAEEDA; color: #633806;
+  }
+  .nav-badge.blue { background: #E6F1FB; color: #0C447C; }
+  .nav-divider { height: 0.5px; background: var(--border); margin: 8px 0; }
+
+  /* ── Main ── */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 960px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 22px; font-weight: 500; }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ── Summary cards ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+  }
+  .summary-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .summary-num { font-size: 26px; font-weight: 500; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 0.5px solid var(--border-md);
+    background: transparent; color: var(--text);
+    transition: background 0.1s;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: #1a1a18; color: #fff; border-color: #1a1a18; }
+  .btn-primary:hover { background: #333; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-success { background: #639922; color: #fff; border-color: #639922; }
+  .btn-success:hover { background: #4e7a1a; }
+  .btn-danger { background: #E24B4A; color: #fff; border-color: #E24B4A; }
+  .btn-danger:hover { background: #c23837; }
+  .btn-ghost { border-color: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500;
+    border: 0.5px solid var(--border); background: var(--surface);
+    cursor: pointer; color: var(--text-muted);
+    transition: all 0.1s;
+  }
+  .filter-btn.active { background: #1a1a18; color: #fff; border-color: #1a1a18; }
+  .filter-btn:hover:not(.active) { border-color: var(--border-md); color: var(--text); }
+
+  /* ── Cards ── */
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
+  .proposal-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    transition: border-color 0.15s;
+  }
+  .proposal-card:hover { border-color: var(--border-md); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-title { font-size: 15px; font-weight: 500; }
+  .card-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 99px; white-space: nowrap; flex-shrink: 0;
+  }
+  .badge-pending { background: #FAEEDA; color: #633806; }
+  .badge-approved { background: #EAF3DE; color: #27500A; }
+  .badge-designing { background: #E6F1FB; color: #0C447C; }
+  .badge-done { background: #EEEDFE; color: #3C3489; }
+  .badge-rejected { background: #FCEBEB; color: #791F1F; }
+
+  /* ── Progress ── */
+  .progress-wrap { margin: 12px 0; }
+  .progress-bar {
+    height: 3px; background: var(--surface2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+
+  /* ── Meta row ── */
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 10px;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--text-muted);
+    background: var(--surface2);
+    padding: 3px 9px; border-radius: var(--radius-md);
+  }
+  .chip i { font-size: 11px; }
+
+  /* ── Card actions ── */
+  .card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center; padding: 48px 20px;
+    color: var(--text-muted); font-size: 14px;
+  }
+  .empty i { font-size: 36px; display: block; margin-bottom: 10px; color: var(--text-hint); }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; opacity: 0; pointer-events: none;
+    transition: opacity 0.18s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    width: 540px; max-width: 95vw;
+    padding: 28px;
+    transform: translateY(16px);
+    transition: transform 0.18s;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 16px; font-weight: 500; }
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; display: block; }
+  .form-control {
+    width: 100%; padding: 8px 12px;
+    border: 0.5px solid var(--border-md); border-radius: var(--radius-md);
+    font-size: 14px; font-family: inherit; color: var(--text);
+    background: var(--surface); outline: none;
+    transition: border-color 0.1s;
+  }
+  .form-control:focus { border-color: #1a1a18; }
+  textarea.form-control { resize: vertical; min-height: 88px; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--border); }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1a1a18; color: #fff; border-radius: var(--radius-md);
+    padding: 10px 20px; font-size: 13px; z-index: 999;
+    transition: transform 0.25s ease;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Section pages ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Detail timeline ── */
+  .timeline { margin-top: 16px; display: flex; flex-direction: column; gap: 0; }
+  .tl-item {
+    display: flex; gap: 12px; padding-bottom: 16px;
+    position: relative;
+  }
+  .tl-item:not(:last-child)::after {
+    content: '';
+    position: absolute; left: 13px; top: 26px;
+    width: 1px; bottom: 0; background: var(--border);
+  }
+  .tl-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 12px; z-index: 1;
+  }
+  .tl-dot.done { background: #EAF3DE; color: #27500A; }
+  .tl-dot.pending { background: var(--surface2); color: var(--text-hint); }
+  .tl-dot.active { background: #E6F1FB; color: #0C447C; }
+  .tl-content { flex: 1; }
+  .tl-label { font-size: 13px; font-weight: 500; }
+  .tl-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a class="logo" href="#" onclick="navigate('dashboard')">
+    <div class="logo-icon"><i class="ti ti-layout-dashboard"></i></div>
+    Design Hub
+  </a>
+  <div class="header-center">
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" id="search-input" placeholder="프로젝트 검색..." oninput="applyFilter()" />
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-primary btn-sm" onclick="openModal()">
+      <i class="ti ti-plus"></i> 기안 작성
+    </button>
+    <div class="avatar">디</div>
+  </div>
+</header>
+
+<!-- Layout -->
+<div class="layout">
+  <!-- Sidebar -->
+  <aside>
+    <span class="nav-section">메뉴</span>
+    <button class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')">
+      <i class="ti ti-layout-dashboard"></i> 대시보드
+    </button>
+    <button class="nav-item" id="nav-all" onclick="navigate('all')">
+      <i class="ti ti-list"></i> 전체 기안
+    </button>
+    <div class="nav-divider"></div>
+    <span class="nav-section">상태별</span>
+    <button class="nav-item" id="nav-pending" onclick="navigate('pending')">
+      <i class="ti ti-clock"></i> 결재 대기
+      <span class="nav-badge" id="badge-pending">0</span>
+    </button>
+    <button class="nav-item" id="nav-approved" onclick="navigate('approved')">
+      <i class="ti ti-check"></i> 결재 완료
+    </button>
+    <button class="nav-item" id="nav-designing" onclick="navigate('designing')">
+      <i class="ti ti-pencil"></i> 디자인 진행
+      <span class="nav-badge blue" id="badge-designing">0</span>
+    </button>
+    <button class="nav-item" id="nav-done" onclick="navigate('done')">
+      <i class="ti ti-circle-check"></i> 디자인 완료
+    </button>
+    <button class="nav-item" id="nav-rejected" onclick="navigate('rejected')">
+      <i class="ti ti-x"></i> 반려
+    </button>
+    <div class="nav-divider"></div>
+    <span class="nav-section">설정</span>
+    <button class="nav-item" id="nav-settings" onclick="navigate('settings')">
+      <i class="ti ti-settings"></i> 설정
+    </button>
+  </aside>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">대시보드</h1>
+          <p class="page-sub">전체 작업 현황을 한눈에 확인하세요</p>
+        </div>
+      </div>
+      <div class="summary-grid" id="summary-grid"></div>
+      <h2 style="font-size:15px;font-weight:500;margin-bottom:12px;">최근 기안</h2>
+      <div class="card-list" id="dashboard-list"></div>
+    </div>
+
+    <!-- All -->
+    <div class="page" id="page-all">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">전체 기안</h1>
+          <p class="page-sub" id="all-count"></p>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+        <button class="filter-btn" onclick="setFilter('pending',this)">결재 대기</button>
+        <button class="filter-btn" onclick="setFilter('approved',this)">결재 완료</button>
+        <button class="filter-btn" onclick="setFilter('designing',this)">디자인 진행</button>
+        <button class="filter-btn" onclick="setFilter('done',this)">디자인 완료</button>
+        <button class="filter-btn" onclick="setFilter('rejected',this)">반려</button>
+      </div>
+      <div class="card-list" id="all-list"></div>
+    </div>
+
+    <!-- Status pages -->
+    <div class="page" id="page-pending">
+      <div class="page-header"><div><h1 class="page-title">결재 대기</h1><p class="page-sub">승인 또는 반려 처리가 필요한 기안입니다</p></div></div>
+      <div class="card-list" id="pending-list"></div>
+    </div>
+    <div class="page" id="page-approved">
+      <div class="page-header"><div><h1 class="page-title">결재 완료</h1><p class="page-sub">결재가 완료되어 디자인 시작을 기다리는 항목입니다</p></div></div>
+      <div class="card-list" id="approved-list"></div>
+    </div>
+    <div class="page" id="page-designing">
+      <div class="page-header"><div><h1 class="page-title">디자인 진행</h1><p class="page-sub">현재 디자인 작업 중인 항목입니다</p></div></div>
+      <div class="card-list" id="designing-list"></div>
+    </div>
+    <div class="page" id="page-done">
+      <div class="page-header"><div><h1 class="page-title">디자인 완료</h1><p class="page-sub">디자인 작업이 완료된 항목입니다</p></div></div>
+      <div class="card-list" id="done-list"></div>
+    </div>
+    <div class="page" id="page-rejected">
+      <div class="page-header"><div><h1 class="page-title">반려</h1><p class="page-sub">반려된 기안 목록입니다. 재기안할 수 있습니다</p></div></div>
+      <div class="card-list" id="rejected-list"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><div><h1 class="page-title">설정</h1><p class="page-sub">앱 환경을 설정합니다</p></div></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;max-width:480px;">
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:14px;">담당자 정보</h3>
+        <div class="form-group">
+          <label class="form-label">디자이너 이름</label>
+          <input class="form-control" id="setting-name" type="text" placeholder="이름 입력" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">부서</label>
+          <input class="form-control" id="setting-dept" type="text" placeholder="예: 디자인팀" />
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">저장</button>
+        <div class="nav-divider" style="margin:20px 0;"></div>
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:10px;">데이터 관리</h3>
+        <button class="btn btn-danger btn-sm" onclick="clearAll()"><i class="ti ti-trash"></i> 전체 데이터 초기화</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-file-plus" style="margin-right:6px"></i>새 기안 작성</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">프로젝트명 *</label>
+      <input class="form-control" id="inp-title" type="text" placeholder="예: 메인 배너 디자인 리뉴얼" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">기안 내용</label>
+      <textarea class="form-control" id="inp-desc" placeholder="작업 내용, 목적, 참고사항 등을 입력하세요"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">기안일</label>
+        <input class="form-control" id="inp-date" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">작업 마감일</label>
+        <input class="form-control" id="inp-deadline" type="date" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">기안자</label>
+        <input class="form-control" id="inp-author" type="text" placeholder="이름 입력" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">카테고리</label>
+        <select class="form-control" id="inp-category">
+          <option value="">선택 안함</option>
+          <option value="배너">배너</option>
+          <option value="팝업">팝업</option>
+          <option value="SNS">SNS</option>
+          <option value="앱">앱</option>
+          <option value="웹">웹</option>
+          <option value="인쇄물">인쇄물</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">취소</button>
+      <button class="btn btn-primary" onclick="submitProposal()"><i class="ti ti-send"></i> 기안 제출</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const STATUSES = { pending:'결재 대기', approved:'결재 완료', designing:'디자인 진행', done:'디자인 완료', rejected:'반려' };
+
+let currentFilter = 'all';
+let currentPage = 'dashboard';
+
+let proposals = JSON.parse(localStorage.getItem('proposals') || 'null') || [
+  { id:1, title:'메인 홈 배너 리뉴얼', desc:'2분기 프로모션 배너 전면 개편', author:'김기획', date:'2026-06-20', deadline:'2026-06-30', category:'배너', status:'designing', approvedAt:'2026-06-21 10:00', designStart:'2026-06-22 09:15', designEnd:null },
+  { id:2, title:'이벤트 팝업 디자인', desc:'여름 이벤트 팝업 신규 제작', author:'이기획', date:'2026-06-23', deadline:'2026-07-05', category:'팝업', status:'pending', approvedAt:null, designStart:null, designEnd:null },
+  { id:3, title:'앱 아이콘 업데이트', desc:'iOS/Android 앱 아이콘 리뉴얼', author:'박기획', date:'2026-06-18', deadline:'2026-06-25', category:'앱', status:'done', approvedAt:'2026-06-19 14:00', designStart:'2026-06-19 14:30', designEnd:'2026-06-24 17:30' },
+  { id:4, title:'SNS 카드뉴스 제작', desc:'7월 신제품 출시 SNS 카드뉴스', author:'최기획', date:'2026-06-24', deadline:'2026-07-10', category:'SNS', status:'approved', approvedAt:'2026-06-25 09:00', designStart:null, designEnd:null },
+];
+let nextId = proposals.reduce((m,p) => Math.max(m,p.id),0) + 1;
+
+function save() { localStorage.setItem('proposals', JSON.stringify(proposals)); }
+
+function now() {
+  const d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+function today() { return now().split(' ')[0]; }
+
+function badgeClass(s) {
+  return { pending:'badge-pending', approved:'badge-approved', designing:'badge-designing', done:'badge-done', rejected:'badge-rejected' }[s] || '';
+}
+function statusIcon(s) {
+  return { pending:'ti-clock', approved:'ti-check', designing:'ti-pencil', done:'ti-circle-check', rejected:'ti-x' }[s] || 'ti-file';
+}
+function progressPct(s) {
+  return { pending:10, approved:35, designing:65, done:100, rejected:0 }[s] || 0;
+}
+function progressColor(s) {
+  return { pending:'#EF9F27', approved:'#639922', designing:'#378ADD', done:'#7F77DD', rejected:'#E24B4A' }[s] || '#888';
+}
+
+function renderCard(p) {
+  const pct = progressPct(p.status);
+  const chips = [];
+  if(p.date) chips.push(`<span class="chip"><i class="ti ti-calendar"></i> 기안 ${p.date}</span>`);
+  if(p.deadline) chips.push(`<span class="chip"><i class="ti ti-alarm"></i> 마감 ${p.deadline}</span>`);
+  if(p.category) chips.push(`<span class="chip"><i class="ti ti-tag"></i> ${p.category}</span>`);
+  if(p.author) chips.push(`<span class="chip"><i class="ti ti-user"></i> ${p.author}</span>`);
+  if(p.approvedAt) chips.push(`<span class="chip"><i class="ti ti-check"></i> 결재 ${p.approvedAt}</span>`);
+  if(p.designStart) chips.push(`<span class="chip"><i class="ti ti-player-play"></i> 시작 ${p.designStart}</span>`);
+  if(p.designEnd) chips.push(`<span class="chip"><i class="ti ti-player-stop"></i> 완료 ${p.designEnd}</span>`);
+
+  const actions = [];
+  if(p.status === 'pending') {
+    actions.push(`<button class="btn btn-success btn-sm" onclick="approve(${p.id})"><i class="ti ti-check"></i> 결재 승인</button>`);
+    actions.push(`<button class="btn btn-danger btn-sm" onclick="reject(${p.id})"><i class="ti ti-x"></i> 반려</button>`);
+  }
+  if(p.status === 'approved') {
+    actions.push(`<button class="btn btn-primary btn-sm" onclick="startDesign(${p.id})"><i class="ti ti-player-play"></i> 디자인 시작</button>`);
+  }
+  if(p.status === 'designing') {
+    actions.push(`<button class="btn btn-success btn-sm" onclick="endDesign(${p.id})"><i class="ti ti-circle-check"></i> 디자인 완료</button>`);
+  }
+  if(p.status === 'rejected') {
+    actions.push(`<button class="btn btn-sm" onclick="resubmit(${p.id})"><i class="ti ti-refresh"></i> 재기안</button>`);
+  }
+  actions.push(`<button class="btn btn-ghost btn-sm" onclick="del(${p.id})"><i class="ti ti-trash"></i> 삭제</button>`);
+
+  return `<div class="proposal-card">
+    <div class="card-top">
+      <div>
+        <div class="card-title"><i class="ti ${statusIcon(p.status)}" style="margin-right:5px;font-size:14px"></i>${p.title}</div>
+        ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
+      </div>
+      <span class="badge ${badgeClass(p.status)}">${STATUSES[p.status]}</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor(p.status)}"></div></div>
+    </div>
+    <div class="meta-row">${chips.join('')}</div>
+    <div class="card-actions">${actions.join('')}</div>
+  </div>`;
+}
+
+function renderSummary() {
+  const c = { pending:0, approved:0, designing:0, done:0, rejected:0 };
+  proposals.forEach(p => c[p.status] = (c[p.status]||0)+1);
+  document.getElementById('summary-grid').innerHTML = `
+    <div class="summary-card"><div class="summary-label"><i class="ti ti-clock" style="color:#BA7517"></i> 결재 대기</div><div class="summary-num" style="color:#BA7517">${c.pending}</div></div>
+    <div class="summary-card"><div class="summary-label"><i class="ti ti-pencil" style="color:#185FA5"></i> 디자인 진행</div><div class="summary-num" style="color:#185FA5">${c.designing}</div></div>
+    <div class="summary-card"><div class="summary-label"><i class="ti ti-circle-check" style="color:#3B6D11"></i> 완료</div><div class="summary-num" style="color:#3B6D11">${c.done}</div></div>
+    <div class="summary-card"><div class="summary-label"><i class="ti ti-list"></i> 전체</div><div class="summary-num">${proposals.length}</div></div>
+  `;
+  document.getElementById('badge-pending').textContent = c.pending;
+  document.getElementById('badge-designing').textContent = c.designing;
+}
+
+function getFiltered() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  let list = currentFilter === 'all' ? proposals : proposals.filter(p => p.status === currentFilter);
+  if(q) list = list.filter(p => p.title.toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || (p.author||'').toLowerCase().includes(q));
+  return list;
+}
+
+function renderList(targetId, filter) {
+  const el = document.getElementById(targetId);
+  if(!el) return;
+  let list = filter ? proposals.filter(filter) : getFiltered();
+  el.innerHTML = list.length ? list.map(renderCard).join('') : `<div class="empty"><i class="ti ti-inbox"></i>항목이 없습니다</div>`;
+}
+
+function renderAll() {
+  renderSummary();
+  const recent = [...proposals].slice(0,5);
+  document.getElementById('dashboard-list').innerHTML = recent.length ? recent.map(renderCard).join('') : `<div class="empty"><i class="ti ti-inbox"></i>기안이 없습니다. 상단의 <b>기안 작성</b>으로 시작하세요.</div>`;
+  renderList('all-list');
+  document.getElementById('all-count').textContent = `총 ${getFiltered().length}건`;
+  renderList('pending-list', p => p.status==='pending');
+  renderList('approved-list', p => p.status==='approved');
+  renderList('designing-list', p => p.status==='designing');
+  renderList('done-list', p => p.status==='done');
+  renderList('rejected-list', p => p.status==='rejected');
+}
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const nav = document.getElementById('nav-' + page);
+  if(nav) nav.classList.add('active');
+  currentPage = page;
+  renderAll();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList('all-list');
+  document.getElementById('all-count').textContent = `총 ${getFiltered().length}건`;
+}
+
+function applyFilter() {
+  renderAll();
+}
+
+function openModal() {
+  document.getElementById('inp-date').value = today();
+  document.getElementById('inp-title').value = '';
+  document.getElementById('inp-desc').value = '';
+  document.getElementById('inp-author').value = '';
+  document.getElementById('inp-deadline').value = '';
+  document.getElementById('inp-category').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('inp-title').focus(), 100);
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+function submitProposal() {
+  const title = document.getElementById('inp-title').value.trim();
+  if(!title) { toast('프로젝트명을 입력하세요'); document.getElementById('inp-title').focus(); return; }
+  proposals.unshift({
+    id: nextId++,
+    title,
+    desc: document.getElementById('inp-desc').value.trim(),
+    author: document.getElementById('inp-author').value.trim(),
+    date: document.getElementById('inp-date').value,
+    deadline: document.getElementById('inp-deadline').value,
+    category: document.getElementById('inp-category').value,
+    status: 'pending',
+    approvedAt: null, designStart: null, designEnd: null,
+  });
+  save(); closeModal(); renderAll();
+  toast('기안이 제출되었습니다');
+}
+
+function approve(id) {
+  const p = proposals.find(x => x.id===id);
+  if(p) { p.status='approved'; p.approvedAt=now(); save(); renderAll(); toast('결재가 승인되었습니다'); }
+}
+function reject(id) {
+  if(!confirm('이 기안을 반려하시겠습니까?')) return;
+  const p = proposals.find(x => x.id===id);
+  if(p) { p.status='rejected'; save(); renderAll(); toast('반려 처리되었습니다'); }
+}
+function resubmit(id) {
+  const p = proposals.find(x => x.id===id);
+  if(p) { p.status='pending'; p.date=today(); save(); renderAll(); toast('재기안 되었습니다'); }
+}
+function startDesign(id) {
+  const p = proposals.find(x => x.id===id);
+  if(p) { p.status='designing'; p.designStart=now(); save(); renderAll(); toast('디자인 작업을 시작합니다'); }
+}
+function endDesign(id) {
+  if(!confirm('디자인 작업을 완료 처리하시겠습니까?')) return;
+  const p = proposals.find(x => x.id===id);
+  if(p) { p.status='done'; p.designEnd=now(); save(); renderAll(); toast('디자인 작업이 완료되었습니다'); }
+}
+function del(id) {
+  if(!confirm('삭제하시겠습니까?')) return;
+  proposals = proposals.filter(x => x.id!==id);
+  save(); renderAll(); toast('삭제되었습니다');
+}
+
+function saveSettings() {
+  const name = document.getElementById('setting-name').value.trim();
+  if(name) { document.querySelector('.avatar').textContent = name.charAt(0); }
+  toast('설정이 저장되었습니다');
+}
+function clearAll() {
+  if(!confirm('모든 데이터를 초기화하시겠습니까? 복구할 수 없습니다.')) return;
+  proposals = []; nextId = 1; save(); renderAll(); toast('초기화되었습니다');
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+renderAll();
+</script>
+</body>
+</html>
