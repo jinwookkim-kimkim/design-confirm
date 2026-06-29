@@ -424,6 +424,11 @@
       <i class="ti ti-x"></i> 반려
     </button>
     <div class="nav-divider"></div>
+    <span class="nav-section">분석</span>
+    <button class="nav-item" id="nav-cosmetic" onclick="navigate('cosmetic')">
+      <i class="ti ti-sparkles"></i> 코스메틱 AI
+    </button>
+    <div class="nav-divider"></div>
     <span class="nav-section">설정</span>
     <button class="nav-item" id="nav-settings" onclick="navigate('settings')">
       <i class="ti ti-settings"></i> 설정
@@ -508,6 +513,102 @@
       <div class="card-list" id="rejected-list"></div>
     </div>
 
+    <!-- Cosmetic AI -->
+    <div class="page" id="page-cosmetic">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title"><i class="ti ti-sparkles" style="margin-right:6px;color:#7F77DD"></i>코스메틱 AI 분석</h1>
+          <p class="page-sub">한국 화장품 시장 분석 · 타사 제품 비교 · 레퍼런스 수집</p>
+        </div>
+      </div>
+
+      <!-- Sub tabs -->
+      <div class="filter-bar" style="margin-bottom:20px;">
+        <button class="filter-btn active" id="ctab-market" onclick="cTab('market',this)"><i class="ti ti-chart-bar" style="font-size:12px"></i> 시장 현황</button>
+        <button class="filter-btn" id="ctab-competitor" onclick="cTab('competitor',this)"><i class="ti ti-building-store" style="font-size:12px"></i> 타사 분석</button>
+        <button class="filter-btn" id="ctab-reference" onclick="cTab('reference',this)"><i class="ti ti-photo" style="font-size:12px"></i> 레퍼런스</button>
+        <button class="filter-btn" id="ctab-ai" onclick="cTab('ai',this)"><i class="ti ti-robot" style="font-size:12px"></i> AI 인사이트</button>
+      </div>
+
+      <!-- 시장현황 -->
+      <div id="csec-market">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-world" style="color:#7F77DD"></i> 시장 규모</div><div class="summary-num" style="color:#7F77DD;font-size:18px;">13.6조</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">2024 기준</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-trending-up" style="color:#639922"></i> 수출 성장률</div><div class="summary-num" style="color:#639922;font-size:18px;">+21%</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">전년 대비</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-ship" style="color:#378ADD"></i> 수출 1위국</div><div class="summary-num" style="color:#378ADD;font-size:16px;">중국·미국</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">K-뷰티 글로벌</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-star" style="color:#BA7517"></i> 주요 채널</div><div class="summary-num" style="color:#BA7517;font-size:16px;">온라인</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">비중 68%</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-chart-bar" style="margin-right:5px;color:#7F77DD"></i>카테고리별 시장 점유율</h3>
+            <div id="market-chart-cat"></div>
+          </div>
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-trending-up" style="margin-right:5px;color:#378ADD"></i>2024 주요 트렌드</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;" id="trend-list"></div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+          <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-building" style="margin-right:5px;color:#639922"></i>주요 브랜드 포지셔닝</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;" id="brand-grid"></div>
+        </div>
+      </div>
+
+      <!-- 타사분석 -->
+      <div id="csec-competitor" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <p style="font-size:13px;color:var(--text-muted);">경쟁사 제품을 등록하고 비교 분석하세요</p>
+          <button class="btn btn-primary btn-sm" onclick="openCompModal()"><i class="ti ti-plus"></i> 제품 추가</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;" id="comp-grid">
+        </div>
+      </div>
+
+      <!-- 레퍼런스 -->
+      <div id="csec-reference" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <p style="font-size:13px;color:var(--text-muted);">이미지 URL을 등록하여 레퍼런스를 수집하세요</p>
+          <button class="btn btn-primary btn-sm" onclick="openRefModal()"><i class="ti ti-plus"></i> 레퍼런스 추가</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="ref-tag-bar"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="ref-grid"></div>
+      </div>
+
+      <!-- AI 인사이트 -->
+      <div id="csec-ai" style="display:none;">
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;">
+          <h3 style="font-size:14px;font-weight:500;margin-bottom:4px;"><i class="ti ti-robot" style="margin-right:6px;color:#7F77DD"></i>AI 시장 분석</h3>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Claude AI가 등록된 타사 제품과 레퍼런스를 바탕으로 인사이트를 생성합니다</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button class="btn btn-sm" onclick="runAI('trend')"><i class="ti ti-trending-up"></i> 트렌드 분석</button>
+            <button class="btn btn-sm" onclick="runAI('competitor')"><i class="ti ti-building-store"></i> 경쟁사 분석</button>
+            <button class="btn btn-sm" onclick="runAI('design')"><i class="ti ti-palette"></i> 디자인 방향 제안</button>
+            <button class="btn btn-sm" onclick="runAI('target')"><i class="ti ti-target"></i> 타겟 소비자 분석</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end;">
+            <div style="flex:1;">
+              <label class="form-label">직접 질문하기</label>
+              <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" />
+            </div>
+            <button class="btn btn-primary" onclick="runAI('custom')" style="flex-shrink:0"><i class="ti ti-send"></i> 분석</button>
+          </div>
+        </div>
+        <div id="ai-result-wrap" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:13px;color:#3C3489;"><i class="ti ti-robot"></i></div>
+            <span style="font-size:13px;font-weight:500;">AI 분석 결과</span>
+            <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
+          </div>
+          <div id="ai-result" style="font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;"></div>
+        </div>
+        <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-top:12px;">
+          <p style="font-size:12px;color:var(--text-muted);"><i class="ti ti-info-circle" style="margin-right:4px"></i>AI 기능은 설정에서 Claude API 키를 등록해야 작동합니다</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Settings -->
     <div class="page" id="page-settings">
       <div class="page-header"><div><h1 class="page-title">설정</h1><p class="page-sub">앱 환경을 설정합니다</p></div></div>
@@ -520,6 +621,14 @@
         <div class="form-group">
           <label class="form-label">부서</label>
           <input class="form-control" id="setting-dept" type="text" placeholder="예: 디자인팀" />
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">저장</button>
+        <div class="nav-divider" style="margin:20px 0;"></div>
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:14px;"><i class="ti ti-robot" style="margin-right:5px;color:#7F77DD"></i>Claude API 설정</h3>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input class="form-control" id="setting-apikey" type="password" placeholder="sk-ant-..." />
+          <p style="font-size:11px;color:var(--text-hint);margin-top:4px;">코스메틱 AI 인사이트 기능에 사용됩니다. 키는 브라우저에만 저장됩니다.</p>
         </div>
         <button class="btn btn-primary" onclick="saveSettings()">저장</button>
         <div class="nav-divider" style="margin:20px 0;"></div>
@@ -578,6 +687,101 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="submitProposal()"><i class="ti ti-send"></i> 기안 제출</button>
+    </div>
+  </div>
+</div>
+
+<!-- Competitor Modal -->
+<div class="modal-overlay" id="comp-modal-overlay" onclick="if(event.target===this)closeCompModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-building-store" style="margin-right:6px"></i>타사 제품 추가</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeCompModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">브랜드명 *</label>
+        <input class="form-control" id="comp-brand" placeholder="예: 아모레퍼시픽" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">제품명 *</label>
+        <input class="form-control" id="comp-product" placeholder="예: 설화수 윤조에센스" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">카테고리</label>
+        <select class="form-control" id="comp-category">
+          <option value="">선택</option>
+          <option>스킨케어</option><option>선케어</option><option>메이크업</option>
+          <option>클렌징</option><option>마스크팩</option><option>향수</option><option>기타</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">가격대</label>
+        <input class="form-control" id="comp-price" placeholder="예: 45,000원" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">타겟 소비자</label>
+      <input class="form-control" id="comp-target" placeholder="예: 2030 여성, 민감성 피부" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">주요 성분 / 특징</label>
+      <textarea class="form-control" id="comp-feature" placeholder="예: 발효 성분, 보습, 미백 기능성"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">패키징 스타일</label>
+      <input class="form-control" id="comp-design" placeholder="예: 미니멀, 한방 전통, 럭셔리" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">제품 이미지 URL</label>
+      <input class="form-control" id="comp-img" placeholder="https://..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">분석 메모</label>
+      <textarea class="form-control" id="comp-memo" placeholder="디자인 참고 포인트, 강약점 등"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeCompModal()">취소</button>
+      <button class="btn btn-primary" onclick="addCompetitor()"><i class="ti ti-plus"></i> 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reference Modal -->
+<div class="modal-overlay" id="ref-modal-overlay" onclick="if(event.target===this)closeRefModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-photo" style="margin-right:6px"></i>레퍼런스 추가</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeRefModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">이미지 URL *</label>
+      <input class="form-control" id="ref-img" placeholder="https://..." oninput="previewRef()" />
+    </div>
+    <div id="ref-preview-wrap" style="display:none;margin-bottom:12px;">
+      <img id="ref-preview" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-md);border:0.5px solid var(--border);" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">제목 / 설명</label>
+      <input class="form-control" id="ref-title" placeholder="예: 설화수 패키징 디자인" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">출처 링크</label>
+      <input class="form-control" id="ref-url" placeholder="https://..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">태그 (쉼표로 구분)</label>
+      <input class="form-control" id="ref-tags" placeholder="예: 미니멀, 럭셔리, 스킨케어" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">메모</label>
+      <textarea class="form-control" id="ref-memo" placeholder="참고할 점, 활용 아이디어 등"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeRefModal()">취소</button>
+      <button class="btn btn-primary" onclick="addReference()"><i class="ti ti-plus"></i> 추가</button>
     </div>
   </div>
 </div>
@@ -849,6 +1053,8 @@ function del(id) {
 function saveSettings() {
   const name = document.getElementById('setting-name').value.trim();
   if(name) { document.querySelector('.avatar').textContent = name.charAt(0); }
+  const apiKey = document.getElementById('setting-apikey').value.trim();
+  if(apiKey) localStorage.setItem('claude_api_key', apiKey);
   toast('설정이 저장되었습니다');
 }
 function clearAll() {
@@ -865,7 +1071,290 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
 }
 
+/* ── Cosmetic AI ── */
+let competitors = JSON.parse(localStorage.getItem('competitors') || '[]');
+let references  = JSON.parse(localStorage.getItem('references')  || '[]');
+let refTagFilter = '';
+
+function saveComp() { localStorage.setItem('competitors', JSON.stringify(competitors)); }
+function saveRef()  { localStorage.setItem('references',  JSON.stringify(references)); }
+
+function cTab(name, btn) {
+  ['market','competitor','reference','ai'].forEach(t => {
+    document.getElementById('csec-'+t).style.display = t===name ? '' : 'none';
+    document.getElementById('ctab-'+t).classList.toggle('active', t===name);
+  });
+  if(name==='market') renderMarket();
+  if(name==='competitor') renderCompetitors();
+  if(name==='reference') renderReferences();
+}
+
+/* Market data */
+const MARKET_CATS = [
+  {label:'스킨케어', pct:38, color:'#7F77DD'},
+  {label:'메이크업', pct:22, color:'#378ADD'},
+  {label:'선케어',   pct:15, color:'#EF9F27'},
+  {label:'클렌징',   pct:12, color:'#1D9E75'},
+  {label:'마스크팩', pct:8,  color:'#D85A30'},
+  {label:'기타',     pct:5,  color:'#888780'},
+];
+const TRENDS = [
+  {icon:'ti-leaf',       label:'클린뷰티 · 비건',      desc:'무독성·동물실험 반대 성분 수요 급증'},
+  {icon:'ti-sun',        label:'선케어 고기능화',        desc:'SPF50+ 색조 선크림, 톤업·미백 복합'},
+  {icon:'ti-flask',      label:'성분 투명화',            desc:'소비자 성분 리터러시 향상, 전성분 마케팅'},
+  {icon:'ti-device-mobile',label:'온라인·라이브커머스', desc:'네이버쇼핑·카카오·틱톡 라이브 급성장'},
+  {icon:'ti-world',      label:'K-뷰티 글로벌',         desc:'미국·유럽·동남아 K-뷰티 프리미엄화'},
+];
+const BRANDS = [
+  {name:'아모레퍼시픽', tier:'프리미엄', color:'#EEEDFE', tc:'#3C3489', tag:'설화수·헤라·이니스프리'},
+  {name:'LG생활건강',   tier:'프리미엄', color:'#E6F1FB', tc:'#0C447C', tag:'숨·오휘·빌리프'},
+  {name:'에뛰드',       tier:'매스',     color:'#FAEEDA', tc:'#633806', tag:'10대 · 트렌디'},
+  {name:'토니모리',     tier:'매스',     color:'#EAF3DE', tc:'#27500A', tag:'가성비 · 이색 패키징'},
+  {name:'닥터자르트',   tier:'더마',     color:'#FCEBEB', tc:'#791F1F', tag:'피부과학 · 기능성'},
+  {name:'코스알엑스',   tier:'인디',     color:'#E1F5EE', tc:'#085041', tag:'글로벌 인디 · SNS'},
+];
+
+function renderMarket() {
+  const catEl = document.getElementById('market-chart-cat');
+  catEl.innerHTML = MARKET_CATS.map(c => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:12px;color:var(--text-muted);width:56px;flex-shrink:0">${c.label}</span>
+      <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${c.pct}%;background:${c.color};border-radius:4px;"></div>
+      </div>
+      <span style="font-size:12px;font-weight:500;width:28px;text-align:right">${c.pct}%</span>
+    </div>`).join('');
+
+  document.getElementById('trend-list').innerHTML = TRENDS.map(t => `
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:6px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#3C3489;font-size:14px;">
+        <i class="ti ${t.icon}"></i>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:500;">${t.label}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">${t.desc}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('brand-grid').innerHTML = BRANDS.map(b => `
+    <div style="background:${b.color};border-radius:var(--radius-md);padding:12px 14px;">
+      <div style="font-size:13px;font-weight:500;color:${b.tc}">${b.name}</div>
+      <div style="font-size:11px;color:${b.tc};opacity:0.75;margin-top:2px;">${b.tier}</div>
+      <div style="font-size:11px;color:${b.tc};margin-top:6px;">${b.tag}</div>
+    </div>`).join('');
+}
+
+/* Competitors */
+function openCompModal() {
+  ['comp-brand','comp-product','comp-price','comp-target','comp-feature','comp-design','comp-img','comp-memo']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('comp-category').value = '';
+  document.getElementById('comp-modal-overlay').classList.add('open');
+}
+function closeCompModal() { document.getElementById('comp-modal-overlay').classList.remove('open'); }
+
+function addCompetitor() {
+  const brand = document.getElementById('comp-brand').value.trim();
+  const product = document.getElementById('comp-product').value.trim();
+  if(!brand || !product) { toast('브랜드명과 제품명을 입력하세요'); return; }
+  competitors.unshift({
+    id: Date.now(), brand, product,
+    category: document.getElementById('comp-category').value,
+    price: document.getElementById('comp-price').value.trim(),
+    target: document.getElementById('comp-target').value.trim(),
+    feature: document.getElementById('comp-feature').value.trim(),
+    design: document.getElementById('comp-design').value.trim(),
+    img: document.getElementById('comp-img').value.trim(),
+    memo: document.getElementById('comp-memo').value.trim(),
+    addedAt: today(),
+  });
+  saveComp(); closeCompModal(); renderCompetitors(); toast('제품이 추가되었습니다');
+}
+
+function delComp(id) {
+  if(!confirm('삭제하시겠습니까?')) return;
+  competitors = competitors.filter(c => c.id !== id);
+  saveComp(); renderCompetitors(); toast('삭제되었습니다');
+}
+
+function renderCompetitors() {
+  const grid = document.getElementById('comp-grid');
+  if(!competitors.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="ti ti-building-store"></i>타사 제품을 추가해보세요</div>`;
+    return;
+  }
+  grid.innerHTML = competitors.map(c => `
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+      ${c.img ? `<img src="${c.img}" style="width:100%;height:140px;object-fit:cover;" onerror="this.style.display='none'" />` : `<div style="height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint);font-size:28px;"><i class="ti ti-photo-off"></i></div>`}
+      <div style="padding:12px 14px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);">${c.brand}</div>
+            <div style="font-size:14px;font-weight:500;margin-top:1px;">${c.product}</div>
+          </div>
+          ${c.category ? `<span class="badge badge-designing" style="flex-shrink:0">${c.category}</span>` : ''}
+        </div>
+        ${c.price ? `<div style="font-size:12px;color:var(--text-muted);margin-top:6px;"><i class="ti ti-tag" style="font-size:11px"></i> ${c.price}</div>` : ''}
+        ${c.target ? `<div style="font-size:12px;color:var(--text-muted);margin-top:3px;"><i class="ti ti-target" style="font-size:11px"></i> ${c.target}</div>` : ''}
+        ${c.feature ? `<div style="font-size:12px;color:var(--text-muted);margin-top:3px;border-top:0.5px solid var(--border);padding-top:6px;margin-top:8px;">${c.feature}</div>` : ''}
+        ${c.design ? `<div style="font-size:12px;margin-top:4px;"><i class="ti ti-palette" style="font-size:11px;color:#7F77DD"></i> <span style="color:#3C3489">${c.design}</span></div>` : ''}
+        ${c.memo ? `<div style="font-size:11px;color:var(--text-hint);margin-top:6px;font-style:italic;">${c.memo}</div>` : ''}
+        <div style="margin-top:10px;padding-top:8px;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;">
+          <button class="btn btn-ghost btn-sm" onclick="delComp(${c.id})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* References */
+function openRefModal() {
+  ['ref-img','ref-title','ref-url','ref-tags','ref-memo'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ref-preview-wrap').style.display = 'none';
+  document.getElementById('ref-modal-overlay').classList.add('open');
+}
+function closeRefModal() { document.getElementById('ref-modal-overlay').classList.remove('open'); }
+
+function previewRef() {
+  const url = document.getElementById('ref-img').value.trim();
+  const wrap = document.getElementById('ref-preview-wrap');
+  const img  = document.getElementById('ref-preview');
+  if(url) { img.src = url; wrap.style.display = ''; } else { wrap.style.display = 'none'; }
+}
+
+function addReference() {
+  const img = document.getElementById('ref-img').value.trim();
+  if(!img) { toast('이미지 URL을 입력하세요'); return; }
+  const tagsRaw = document.getElementById('ref-tags').value.trim();
+  references.unshift({
+    id: Date.now(),
+    img,
+    title: document.getElementById('ref-title').value.trim(),
+    url: document.getElementById('ref-url').value.trim(),
+    tags: tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
+    memo: document.getElementById('ref-memo').value.trim(),
+    addedAt: today(),
+  });
+  saveRef(); closeRefModal(); renderReferences(); toast('레퍼런스가 추가되었습니다');
+}
+
+function delRef(id) {
+  if(!confirm('삭제하시겠습니까?')) return;
+  references = references.filter(r => r.id !== id);
+  saveRef(); renderReferences(); toast('삭제되었습니다');
+}
+
+function setRefTag(tag) {
+  refTagFilter = refTagFilter === tag ? '' : tag;
+  renderReferences();
+}
+
+function renderReferences() {
+  const allTags = [...new Set(references.flatMap(r => r.tags))];
+  document.getElementById('ref-tag-bar').innerHTML = allTags.map(t =>
+    `<button class="filter-btn ${refTagFilter===t?'active':''}" onclick="setRefTag('${t}')" style="border-radius:99px;">${t}</button>`
+  ).join('');
+
+  const list = refTagFilter ? references.filter(r => r.tags.includes(refTagFilter)) : references;
+  const grid = document.getElementById('ref-grid');
+  if(!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="ti ti-photo"></i>레퍼런스를 추가해보세요</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(r => `
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+      <div style="position:relative;">
+        <img src="${r.img}" style="width:100%;height:150px;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
+        ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
+      </div>
+      <div style="padding:10px 12px;">
+        ${r.title ? `<div style="font-size:13px;font-weight:500;margin-bottom:4px;">${r.title}</div>` : ''}
+        ${r.tags.length ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${r.tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#EEEDFE;color:#3C3489;">${t}</span>`).join('')}</div>` : ''}
+        ${r.memo ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${r.memo}</div>` : ''}
+        <div style="margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--text-hint)">${r.addedAt}</span>
+          <button class="btn btn-ghost btn-sm" onclick="delRef(${r.id})" style="padding:2px 6px;"><i class="ti ti-trash" style="font-size:12px"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* AI */
+async function runAI(type) {
+  const apiKey = localStorage.getItem('claude_api_key') || '';
+  if(!apiKey) {
+    toast('설정에서 Claude API 키를 먼저 등록해주세요');
+    navigate('settings');
+    return;
+  }
+
+  const compSummary = competitors.length
+    ? competitors.map(c => `- ${c.brand} "${c.product}" (${c.category||'?'}, ${c.price||'가격미상'}): ${c.feature||''} / 패키징: ${c.design||''}`).join('\n')
+    : '(등록된 타사 제품 없음)';
+  const refSummary = references.length
+    ? references.map(r => `- ${r.title||r.img} [태그: ${r.tags.join(', ')||'없음'}] ${r.memo||''}`).join('\n')
+    : '(등록된 레퍼런스 없음)';
+
+  const PROMPTS = {
+    trend:      `한국 화장품 시장의 2024~2025년 주요 트렌드를 분석해주세요. K-뷰티, 성분, 패키징, 채널 트렌드를 포함해 실용적인 인사이트를 한국어로 작성해주세요.`,
+    competitor: `아래 타사 제품 분석 정보를 바탕으로 경쟁사 강약점과 디자인 차별화 방향을 분석해주세요.\n\n${compSummary}`,
+    design:     `아래 레퍼런스와 타사 제품 정보를 참고하여 한국 코스메틱 브랜드를 위한 패키징·비주얼 디자인 방향을 제안해주세요.\n\n[레퍼런스]\n${refSummary}\n\n[타사 제품]\n${compSummary}`,
+    target:     `한국 화장품 시장의 주요 소비자 세그먼트와 각 세그먼트별 구매 행동, 선호 브랜드 특성, 디자인 선호도를 분석해주세요.`,
+    custom:     document.getElementById('ai-custom-q').value.trim(),
+  };
+
+  const prompt = PROMPTS[type];
+  if(!prompt) { toast('질문을 입력해주세요'); return; }
+
+  const resultWrap = document.getElementById('ai-result-wrap');
+  const resultEl   = document.getElementById('ai-result');
+  const loadingEl  = document.getElementById('ai-loading');
+
+  resultWrap.style.display = '';
+  resultEl.textContent = '';
+  loadingEl.style.display = '';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system: '당신은 한국 화장품(코스메틱) 시장 전문가이자 브랜드 디자인 컨설턴트입니다. 실용적이고 구체적인 인사이트를 제공하세요.',
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+
+    if(!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error?.message || `API 오류 ${res.status}`);
+    }
+
+    const data = await res.json();
+    resultEl.textContent = data.content?.[0]?.text || '응답을 받지 못했습니다.';
+  } catch(e) {
+    resultEl.textContent = '오류: ' + e.message;
+  } finally {
+    loadingEl.style.display = 'none';
+  }
+}
+
+/* Init */
+(function(){
+  const saved = localStorage.getItem('claude_api_key');
+  if(saved) document.getElementById('setting-apikey').value = saved;
+  renderMarket();
+})();
+
 renderAll();
 </script>
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </body>
 </html>
