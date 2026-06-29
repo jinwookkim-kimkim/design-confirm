@@ -663,7 +663,6 @@
           <label class="form-label">부서</label>
           <input class="form-control" id="setting-dept" type="text" placeholder="예: 디자인팀" />
         </div>
-        <button class="btn btn-primary" onclick="saveSettings()">저장</button>
         <div class="nav-divider" style="margin:20px 0;"></div>
         <h3 style="font-size:14px;font-weight:500;margin-bottom:14px;"><i class="ti ti-robot" style="margin-right:5px;color:#7F77DD"></i>Claude API 설정</h3>
         <div class="form-group">
@@ -1032,7 +1031,7 @@ function navigate(page) {
 
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderList('all-list');
   document.getElementById('all-count').textContent = `총 ${getFiltered().length}건`;
@@ -1055,7 +1054,9 @@ function openModal() {
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
 
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { closeModal(); closeCompModal(); closeRefModal(); }
+});
 
 function submitProposal() {
   const title = document.getElementById('inp-title').value.trim();
@@ -1112,7 +1113,11 @@ function saveSettings() {
 }
 function clearAll() {
   if(!confirm('모든 데이터를 초기화하시겠습니까? 복구할 수 없습니다.')) return;
-  proposals = []; nextId = 1; save(); renderAll(); toast('초기화되었습니다');
+  proposals = []; nextId = 1; save();
+  competitors = []; saveComp();
+  references = []; saveRef();
+  renderAll(); renderReferences(); renderCompetitors();
+  toast('초기화되었습니다');
 }
 
 let toastTimer;
