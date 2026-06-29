@@ -511,6 +511,27 @@
     pointer-events: none; user-select: none;
   }
 
+  /* ── Particles Canvas ── */
+  #landing-canvas {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+  }
+  .landing-header, .landing-body, .landing-deco, .landing-stats {
+    position: relative; z-index: 1;
+  }
+
+  /* ── Typewriter ── */
+  .typewriter-cursor {
+    display: inline-block; width: 2px; height: 1em;
+    background: var(--accent-light); margin-left: 3px;
+    vertical-align: middle; border-radius: 1px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
   /* ── Slide Menu ── */
   #slide-menu-overlay {
     position: fixed; inset: 0; background: rgba(43,29,14,0.3);
@@ -604,6 +625,9 @@
     </button>
   </div>
 
+  <!-- Particles -->
+  <canvas id="landing-canvas"></canvas>
+
   <!-- Deco text (배경 장식) -->
   <div class="landing-deco">DC</div>
 
@@ -611,8 +635,8 @@
   <div class="landing-body">
     <div class="landing-eyebrow">라로제 디자인팀</div>
     <div class="landing-title">Design<br><span>Confirm</span></div>
-    <p class="landing-desc">기안부터 결재, 디자인 시작과 완료까지<br>팀의 모든 작업을 한눈에 관리하세요.</p>
-    <button class="landing-cta" onclick="enterApp('dashboard')">
+    <p class="landing-desc" id="landing-desc-text"></p>
+    <button class="landing-cta" onclick="enterApp('dashboard')" id="landing-cta-btn" style="opacity:0;transition:opacity 0.6s;">
       앱 시작하기 <i class="ti ti-arrow-right"></i>
     </button>
   </div>
@@ -1152,6 +1176,88 @@ function closeSlideMenu() {
   document.getElementById('slide-menu-overlay').classList.remove('open');
   document.getElementById('hamburger-btn').classList.remove('open');
 }
+
+/* ── Particles ── */
+(function() {
+  const canvas = document.getElementById('landing-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COLORS = ['rgba(196,149,106,', 'rgba(139,107,74,', 'rgba(240,228,212,', 'rgba(180,130,90,'];
+
+  function rand(a, b) { return Math.random() * (b - a) + a; }
+
+  function makeParticle() {
+    return {
+      x: rand(0, W), y: rand(0, H),
+      r: rand(3, 10),
+      dx: rand(-0.3, 0.3), dy: rand(-0.5, -0.1),
+      alpha: rand(0.08, 0.35),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      wobble: rand(0, Math.PI * 2),
+      wobbleSpeed: rand(0.005, 0.02),
+    };
+  }
+
+  for (let i = 0; i < 55; i++) particles.push(makeParticle());
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.wobble += p.wobbleSpeed;
+      p.x += p.dx + Math.sin(p.wobble) * 0.3;
+      p.y += p.dy;
+      if (p.y + p.r < 0) { p.y = H + p.r; p.x = rand(0, W); }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Typewriter ── */
+(function() {
+  const lines = [
+    '기안부터 결재, 디자인 시작과 완료까지',
+    '팀의 모든 작업을 한눈에 관리하세요.',
+  ];
+  const el = document.getElementById('landing-desc-text');
+  const cursor = document.createElement('span');
+  cursor.className = 'typewriter-cursor';
+  let lineIdx = 0, charIdx = 0, fullText = '';
+
+  function type() {
+    const current = lines[lineIdx];
+    if (charIdx <= current.length) {
+      const displayed = lines.slice(0, lineIdx).join('<br>') + (lineIdx > 0 ? '<br>' : '') + current.slice(0, charIdx);
+      el.innerHTML = displayed;
+      el.appendChild(cursor);
+      charIdx++;
+      setTimeout(type, 50);
+    } else {
+      lineIdx++;
+      charIdx = 0;
+      if (lineIdx < lines.length) {
+        setTimeout(type, 300);
+      } else {
+        setTimeout(() => {
+          document.getElementById('landing-cta-btn').style.opacity = '1';
+        }, 400);
+      }
+    }
+  }
+  setTimeout(type, 800);
+})();
 
 function updateLandingStats() {
   const data = JSON.parse(localStorage.getItem('proposals') || '[]');
