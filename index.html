@@ -724,6 +724,15 @@
         </select>
       </div>
     </div>
+    <div class="form-group">
+      <label class="form-label">긴급도</label>
+      <div style="display:flex;gap:6px;">
+        <button type="button" class="urgency-btn" id="urg-low"    onclick="selectUrgency('low',this)"    style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:500;color:var(--text-muted);">🟢 여유</button>
+        <button type="button" class="urgency-btn" id="urg-normal" onclick="selectUrgency('normal',this)" style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid #378ADD;background:#E6F1FB;cursor:pointer;font-size:12px;font-weight:500;color:#0C447C;">🟡 보통</button>
+        <button type="button" class="urgency-btn" id="urg-high"   onclick="selectUrgency('high',this)"   style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:500;color:var(--text-muted);">🔴 긴급</button>
+      </div>
+      <input type="hidden" id="inp-urgency" value="normal" />
+    </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="submitProposal()"><i class="ti ti-send"></i> 기안 제출</button>
@@ -965,7 +974,10 @@ function renderCard(p) {
         <div class="card-title"><i class="ti ${statusIcon(p.status)}" style="margin-right:5px;font-size:14px"></i>${p.title}</div>
         ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
       </div>
-      <span class="badge ${badgeClass(p.status)}">${STATUSES[p.status]}</span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+        ${p.urgency && p.urgency !== 'normal' ? `<span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;background:${URGENCY[p.urgency]?.bg};color:${URGENCY[p.urgency]?.color}">${URGENCY[p.urgency]?.emoji} ${URGENCY[p.urgency]?.label}</span>` : ''}
+        <span class="badge ${badgeClass(p.status)}">${STATUSES[p.status]}</span>
+      </div>
     </div>
     <div class="progress-wrap">
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor(p.status)}"></div></div>
@@ -1041,6 +1053,28 @@ function applyFilter() {
   renderAll();
 }
 
+const URGENCY = {
+  low:    { label:'여유', emoji:'🟢', bg:'#EAF3DE', color:'#27500A' },
+  normal: { label:'보통', emoji:'🟡', bg:'#E6F1FB', color:'#0C447C' },
+  high:   { label:'긴급', emoji:'🔴', bg:'#FCEBEB', color:'#791F1F' },
+};
+
+function selectUrgency(val, btn) {
+  document.getElementById('inp-urgency').value = val;
+  ['urg-low','urg-normal','urg-high'].forEach(id => {
+    const b = document.getElementById(id);
+    const key = id.replace('urg-','');
+    const u = URGENCY[key];
+    b.style.background = 'var(--surface)';
+    b.style.borderColor = 'var(--border)';
+    b.style.color = 'var(--text-muted)';
+  });
+  const u = URGENCY[val];
+  btn.style.background = u.bg;
+  btn.style.borderColor = u.color;
+  btn.style.color = u.color;
+}
+
 function openModal() {
   document.getElementById('inp-date').value = today();
   document.getElementById('inp-title').value = '';
@@ -1048,6 +1082,7 @@ function openModal() {
   document.getElementById('inp-author').value = '';
   document.getElementById('inp-deadline').value = '';
   document.getElementById('inp-category').value = '';
+  selectUrgency('normal', document.getElementById('urg-normal'));
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(() => document.getElementById('inp-title').focus(), 100);
 }
@@ -1069,6 +1104,7 @@ function submitProposal() {
     date: document.getElementById('inp-date').value,
     deadline: document.getElementById('inp-deadline').value,
     category: document.getElementById('inp-category').value,
+    urgency: document.getElementById('inp-urgency').value || 'normal',
     status: 'pending',
     approvedAt: null, designStart: null, designEnd: null,
   });
