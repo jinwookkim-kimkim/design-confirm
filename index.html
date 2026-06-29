@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
@@ -606,7 +606,7 @@
     <button class="slide-menu-item" onclick="enterApp('designing')"><i class="ti ti-pencil"></i> 디자인 진행</button>
     <button class="slide-menu-item" onclick="enterApp('done')"><i class="ti ti-checks"></i> 디자인 완료</button>
     <div class="slide-menu-divider"></div>
-    <button class="slide-menu-item" onclick="enterApp('cosmetic')"><i class="ti ti-sparkles"></i> 코스메틱 AI 분석</button>
+    <button class="slide-menu-item" onclick="enterApp('cosmetic')"><i class="ti ti-palette"></i> 디자인 레퍼런스</button>
     <button class="slide-menu-item" onclick="enterApp('settings')"><i class="ti ti-settings"></i> 설정</button>
     <div class="slide-menu-footer">Design Confirm · 라로제 디자인팀</div>
   </div>
@@ -712,7 +712,7 @@
     <div class="nav-divider"></div>
     <span class="nav-section">분석</span>
     <button class="nav-item" id="nav-cosmetic" onclick="navigate('cosmetic')">
-      <i class="ti ti-sparkles"></i> 코스메틱 AI
+      <i class="ti ti-palette"></i> 디자인 레퍼런스
     </button>
     <div class="nav-divider"></div>
     <span class="nav-section">설정</span>
@@ -803,8 +803,8 @@
     <div class="page" id="page-cosmetic">
       <div class="page-header">
         <div>
-          <h1 class="page-title"><i class="ti ti-sparkles" style="margin-right:6px;color:#7F77DD"></i>코스메틱 AI 분석</h1>
-          <p class="page-sub">한국 화장품 시장 분석 · 타사 제품 비교 · 레퍼런스 수집</p>
+          <h1 class="page-title"><i class="ti ti-palette" style="margin-right:6px;color:#7F77DD"></i>디자인 레퍼런스</h1>
+          <p class="page-sub">레퍼런스 수집 · 타사 디자인 분석 · AI 디자인 제안</p>
         </div>
       </div>
 
@@ -812,7 +812,7 @@
       <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
         <button class="filter-btn active" id="ctab-reference" onclick="cTab('reference',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-photo" style="font-size:13px"></i> 레퍼런스 <span style="font-size:10px;color:var(--text-hint);font-weight:400">이미지 수집</span></button>
         <button class="filter-btn" id="ctab-competitor" onclick="cTab('competitor',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-building-store" style="font-size:13px"></i> 타사 분석 <span style="font-size:10px;color:var(--text-hint);font-weight:400">경쟁사 비교</span></button>
-        <button class="filter-btn" id="ctab-market" onclick="cTab('market',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-chart-bar" style="font-size:13px"></i> 시장 현황 <span style="font-size:10px;color:var(--text-hint);font-weight:400">K-뷰티 데이터</span></button>
+
         <button class="filter-btn" id="ctab-ai" onclick="cTab('ai',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-robot" style="font-size:13px"></i> AI 인사이트 <span style="font-size:10px;color:var(--text-hint);font-weight:400">AI에게 물어보기</span></button>
       </div>
 
@@ -839,30 +839,30 @@
       </div>
 
       <!-- 시장현황 -->
-      <div id="csec-market" style="display:none;">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-world" style="color:#7F77DD"></i> 시장 규모</div><div class="summary-num" style="color:#7F77DD;font-size:18px;">13.6조</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">2024 기준</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-trending-up" style="color:#639922"></i> 수출 성장률</div><div class="summary-num" style="color:#639922;font-size:18px;">+21%</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">전년 대비</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-ship" style="color:#378ADD"></i> 수출 1위국</div><div class="summary-num" style="color:#378ADD;font-size:16px;">중국·미국</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">K-뷰티 글로벌</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-star" style="color:#BA7517"></i> 주요 채널</div><div class="summary-num" style="color:#BA7517;font-size:16px;">온라인</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">비중 68%</div></div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
-            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-chart-bar" style="margin-right:5px;color:#7F77DD"></i>카테고리별 시장 점유율</h3>
-            <div id="market-chart-cat"></div>
-          </div>
-          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
-            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-trending-up" style="margin-right:5px;color:#378ADD"></i>2024 주요 트렌드</h3>
-            <div style="display:flex;flex-direction:column;gap:10px;" id="trend-list"></div>
-          </div>
-        </div>
 
-        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
-          <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-building" style="margin-right:5px;color:#639922"></i>주요 브랜드 포지셔닝</h3>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;" id="brand-grid"></div>
-        </div>
-      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <!-- 타사분석 -->
       <div id="csec-competitor" style="display:none;">
@@ -1595,11 +1595,11 @@ function saveComp() { localStorage.setItem('competitors', JSON.stringify(competi
 function saveRef()  { localStorage.setItem('references',  JSON.stringify(references)); }
 
 function cTab(name, btn) {
-  ['market','competitor','reference','ai'].forEach(t => {
+function cTab(name, btn) {
+  ['competitor','reference','ai'].forEach(t => {
     document.getElementById('csec-'+t).style.display = t===name ? '' : 'none';
     document.getElementById('ctab-'+t).classList.toggle('active', t===name);
   });
-  if(name==='market') renderMarket();
   if(name==='competitor') renderCompetitors();
   if(name==='reference') renderReferences();
   if(name==='ai') {}
