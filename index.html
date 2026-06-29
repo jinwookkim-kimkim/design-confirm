@@ -523,15 +523,37 @@
       </div>
 
       <!-- Sub tabs -->
-      <div class="filter-bar" style="margin-bottom:20px;">
-        <button class="filter-btn active" id="ctab-market" onclick="cTab('market',this)"><i class="ti ti-chart-bar" style="font-size:12px"></i> 시장 현황</button>
-        <button class="filter-btn" id="ctab-competitor" onclick="cTab('competitor',this)"><i class="ti ti-building-store" style="font-size:12px"></i> 타사 분석</button>
-        <button class="filter-btn" id="ctab-reference" onclick="cTab('reference',this)"><i class="ti ti-photo" style="font-size:12px"></i> 레퍼런스</button>
-        <button class="filter-btn" id="ctab-ai" onclick="cTab('ai',this)"><i class="ti ti-robot" style="font-size:12px"></i> AI 인사이트</button>
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="filter-btn active" id="ctab-reference" onclick="cTab('reference',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-photo" style="font-size:13px"></i> 레퍼런스 <span style="font-size:10px;color:var(--text-hint);font-weight:400">이미지 수집</span></button>
+        <button class="filter-btn" id="ctab-competitor" onclick="cTab('competitor',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-building-store" style="font-size:13px"></i> 타사 분석 <span style="font-size:10px;color:var(--text-hint);font-weight:400">경쟁사 비교</span></button>
+        <button class="filter-btn" id="ctab-market" onclick="cTab('market',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-chart-bar" style="font-size:13px"></i> 시장 현황 <span style="font-size:10px;color:var(--text-hint);font-weight:400">K-뷰티 데이터</span></button>
+        <button class="filter-btn" id="ctab-ai" onclick="cTab('ai',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-robot" style="font-size:13px"></i> AI 인사이트 <span style="font-size:10px;color:var(--text-hint);font-weight:400">AI에게 물어보기</span></button>
+      </div>
+
+      <!-- 레퍼런스 (기본 탭) -->
+      <div id="csec-reference">
+        <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-bulb" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#3C3489;">이렇게 사용하세요</div>
+            <div style="font-size:12px;color:#534AB7;margin-top:2px;">참고하고 싶은 이미지를 찾아 <b>이미지 주소 복사</b> → 레퍼런스 추가에 붙여넣기 하면 바로 저장돼요. 배너·상세페이지·광고 카테고리로 분류해서 팀과 공유하세요.</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="filter-btn active" id="rtab-all"    onclick="setRefCat('all',this)">전체</button>
+            <button class="filter-btn" id="rtab-banner"  onclick="setRefCat('배너',this)"><i class="ti ti-layout-bottombar" style="font-size:12px"></i> 배너</button>
+            <button class="filter-btn" id="rtab-detail"  onclick="setRefCat('상세페이지',this)"><i class="ti ti-file-description" style="font-size:12px"></i> 상세페이지</button>
+            <button class="filter-btn" id="rtab-ad"      onclick="setRefCat('광고',this)"><i class="ti ti-speakerphone" style="font-size:12px"></i> 광고</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openRefModal()"><i class="ti ti-plus"></i> 레퍼런스 추가</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="ref-tag-bar"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="ref-grid"></div>
       </div>
 
       <!-- 시장현황 -->
-      <div id="csec-market">
+      <div id="csec-market" style="display:none;">
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
           <div class="summary-card"><div class="summary-label"><i class="ti ti-world" style="color:#7F77DD"></i> 시장 규모</div><div class="summary-num" style="color:#7F77DD;font-size:18px;">13.6조</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">2024 기준</div></div>
           <div class="summary-card"><div class="summary-label"><i class="ti ti-trending-up" style="color:#639922"></i> 수출 성장률</div><div class="summary-num" style="color:#639922;font-size:18px;">+21%</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">전년 대비</div></div>
@@ -558,58 +580,72 @@
 
       <!-- 타사분석 -->
       <div id="csec-competitor" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <p style="font-size:13px;color:var(--text-muted);">경쟁사 제품을 등록하고 비교 분석하세요</p>
+        <div style="background:#E6F1FB;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-building-store" style="font-size:20px;color:#0C447C;flex-shrink:0"></i>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#0C447C;">경쟁사 제품을 기록하세요</div>
+            <div style="font-size:12px;color:#185FA5;margin-top:2px;">아모레퍼시픽, LG생활건강 등 벤치마킹할 타사 제품을 등록하면 AI가 비교 분석해줘요. 브랜드·가격·패키징 스타일·타겟층을 정리해두세요.</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
           <button class="btn btn-primary btn-sm" onclick="openCompModal()"><i class="ti ti-plus"></i> 제품 추가</button>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;" id="comp-grid">
-        </div>
-      </div>
-
-      <!-- 레퍼런스 -->
-      <div id="csec-reference" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <div style="display:flex;gap:4px;">
-            <button class="filter-btn active" id="rtab-all"    onclick="setRefCat('all',this)">전체</button>
-            <button class="filter-btn" id="rtab-banner"  onclick="setRefCat('배너',this)"><i class="ti ti-layout-bottombar" style="font-size:12px"></i> 배너</button>
-            <button class="filter-btn" id="rtab-detail"  onclick="setRefCat('상세페이지',this)"><i class="ti ti-file-description" style="font-size:12px"></i> 상세페이지</button>
-            <button class="filter-btn" id="rtab-ad"      onclick="setRefCat('광고',this)"><i class="ti ti-speakerphone" style="font-size:12px"></i> 광고</button>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="openRefModal()"><i class="ti ti-plus"></i> 레퍼런스 추가</button>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="ref-tag-bar"></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="ref-grid"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;" id="comp-grid"></div>
       </div>
 
       <!-- AI 인사이트 -->
       <div id="csec-ai" style="display:none;">
-        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;">
-          <h3 style="font-size:14px;font-weight:500;margin-bottom:4px;"><i class="ti ti-robot" style="margin-right:6px;color:#7F77DD"></i>AI 시장 분석</h3>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Claude AI가 등록된 타사 제품과 레퍼런스를 바탕으로 인사이트를 생성합니다</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button class="btn btn-sm" onclick="runAI('trend')"><i class="ti ti-trending-up"></i> 트렌드 분석</button>
-            <button class="btn btn-sm" onclick="runAI('competitor')"><i class="ti ti-building-store"></i> 경쟁사 분석</button>
-            <button class="btn btn-sm" onclick="runAI('design')"><i class="ti ti-palette"></i> 디자인 방향 제안</button>
-            <button class="btn btn-sm" onclick="runAI('target')"><i class="ti ti-target"></i> 타겟 소비자 분석</button>
+        <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-robot" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#3C3489;">AI에게 시장 분석을 맡기세요</div>
+            <div style="font-size:12px;color:#534AB7;margin-top:2px;">아래 버튼 중 하나를 누르거나 직접 질문하면 Claude AI가 한국 화장품 시장과 등록한 타사 제품을 바탕으로 분석해줍니다. API 키는 설정에서 등록하세요.</div>
           </div>
-          <div style="display:flex;gap:8px;align-items:flex-end;">
-            <div style="flex:1;">
-              <label class="form-label">직접 질문하기</label>
-              <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" />
-            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+          <button onclick="runAI('trend')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-trending-up" style="font-size:20px;color:#639922;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">트렌드 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">2024~2025 K-뷰티 트렌드 요약</div>
+          </button>
+          <button onclick="runAI('competitor')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-building-store" style="font-size:20px;color:#378ADD;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">경쟁사 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">등록한 타사 제품 강약점 비교</div>
+          </button>
+          <button onclick="runAI('design')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-palette" style="font-size:20px;color:#7F77DD;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">디자인 방향 제안</div>
+            <div style="font-size:12px;color:var(--text-muted);">레퍼런스 기반 패키징·비주얼 방향</div>
+          </button>
+          <button onclick="runAI('target')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-target" style="font-size:20px;color:#D85A30;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">타겟 소비자 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">연령·라이프스타일별 구매 행동</div>
+          </button>
+        </div>
+
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;">
+          <label class="form-label" style="margin-bottom:8px;"><i class="ti ti-message" style="margin-right:4px"></i>직접 질문하기</label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" style="flex:1" />
             <button class="btn btn-primary" onclick="runAI('custom')" style="flex-shrink:0"><i class="ti ti-send"></i> 분석</button>
           </div>
         </div>
+
         <div id="ai-result-wrap" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-            <div style="width:26px;height:26px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:13px;color:#3C3489;"><i class="ti ti-robot"></i></div>
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:14px;color:#3C3489;"><i class="ti ti-robot"></i></div>
             <span style="font-size:13px;font-weight:500;">AI 분석 결과</span>
-            <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
+            <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;margin-left:4px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
           </div>
-          <div id="ai-result" style="font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap;"></div>
+          <div id="ai-result" style="font-size:14px;line-height:1.9;color:var(--text);white-space:pre-wrap;"></div>
         </div>
-        <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-top:12px;">
-          <p style="font-size:12px;color:var(--text-muted);"><i class="ti ti-info-circle" style="margin-right:4px"></i>AI 기능은 설정에서 Claude API 키를 등록해야 작동합니다</p>
+
+        <div style="background:var(--surface2);border-radius:var(--radius-md);padding:12px 16px;margin-top:12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-info-circle" style="color:var(--text-hint);flex-shrink:0"></i>
+          <p style="font-size:12px;color:var(--text-muted);">AI 기능은 <b>설정 → Claude API 키</b>를 등록해야 작동합니다. API 키는 <a href="https://console.anthropic.com" target="_blank" style="color:#534AB7">console.anthropic.com</a>에서 발급받으세요.</p>
         </div>
       </div>
     </div>
@@ -989,6 +1025,9 @@ function navigate(page) {
   if(nav) nav.classList.add('active');
   currentPage = page;
   renderAll();
+  if(page === 'cosmetic') {
+    cTab('reference', document.getElementById('ctab-reference'));
+  }
 }
 
 function setFilter(f, btn) {
@@ -1102,6 +1141,7 @@ function cTab(name, btn) {
   if(name==='market') renderMarket();
   if(name==='competitor') renderCompetitors();
   if(name==='reference') renderReferences();
+  if(name==='ai') {}
 }
 
 /* Market data */
