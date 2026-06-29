@@ -1630,35 +1630,35 @@ const BRANDS = [
   {name:'코스알엑스',   tier:'인디',     color:'#E1F5EE', tc:'#085041', tag:'글로벌 인디 · SNS'},
 ];
 
-function renderMarket() {
-  const catEl = document.getElementById('market-chart-cat');
-  catEl.innerHTML = MARKET_CATS.map(c => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-      <span style="font-size:12px;color:var(--text-muted);width:56px;flex-shrink:0">${c.label}</span>
-      <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
-        <div style="height:100%;width:${c.pct}%;background:${c.color};border-radius:4px;"></div>
-      </div>
-      <span style="font-size:12px;font-weight:500;width:28px;text-align:right">${c.pct}%</span>
-    </div>`).join('');
 
-  document.getElementById('trend-list').innerHTML = TRENDS.map(t => `
-    <div style="display:flex;gap:10px;align-items:flex-start;">
-      <div style="width:28px;height:28px;border-radius:6px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#3C3489;font-size:14px;">
-        <i class="ti ${t.icon}"></i>
-      </div>
-      <div>
-        <div style="font-size:13px;font-weight:500;">${t.label}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">${t.desc}</div>
-      </div>
-    </div>`).join('');
 
-  document.getElementById('brand-grid').innerHTML = BRANDS.map(b => `
-    <div style="background:${b.color};border-radius:var(--radius-md);padding:12px 14px;">
-      <div style="font-size:13px;font-weight:500;color:${b.tc}">${b.name}</div>
-      <div style="font-size:11px;color:${b.tc};opacity:0.75;margin-top:2px;">${b.tier}</div>
-      <div style="font-size:11px;color:${b.tc};margin-top:6px;">${b.tag}</div>
-    </div>`).join('');
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Competitors */
 function openCompModal() {
@@ -1889,7 +1889,7 @@ async function runAI(type) {
 (function(){
   const saved = localStorage.getItem('claude_api_key');
   if(saved) document.getElementById('setting-apikey').value = saved;
-  renderMarket();
+
 })();
 
 renderAll();
