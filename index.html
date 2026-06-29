@@ -3,42 +3,34 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Design Confirm</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>디자인 결재 관리</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f7f6f3;
+    --bg: #f5f4f1;
     --surface: #ffffff;
-    --surface2: #f2f1ed;
-    --border: rgba(0,0,0,0.08);
-    --border-md: rgba(0,0,0,0.16);
-    --text: #111110;
-    --text-muted: #6a6a65;
-    --text-hint: #b0afa9;
-    --accent: #111110;
-    --radius-md: 3px;
-    --radius-lg: 4px;
-    --radius-xl: 6px;
-    --sidebar-w: 240px;
-    --header-h: 60px;
-    --serif: 'Cormorant Garamond', Georgia, serif;
-    --sans: 'DM Sans', system-ui, sans-serif;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-hint: #9b9b96;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --sidebar-w: 220px;
+    --header-h: 56px;
   }
 
   body {
-    font-family: var(--sans);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-weight: 300;
-    letter-spacing: 0.01em;
   }
 
   /* ── Header ── */
@@ -47,56 +39,51 @@
     top: 0; left: 0; right: 0;
     height: var(--header-h);
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 0 28px;
+    padding: 0 20px;
     z-index: 100;
     gap: 12px;
   }
   .logo {
-    display: flex; align-items: baseline; gap: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 15px; font-weight: 600; color: var(--text);
     text-decoration: none;
     width: var(--sidebar-w);
   }
-  .logo-wordmark {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: -0.01em;
-    line-height: 1;
+  .logo-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: #1a1a18;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 15px;
   }
-  .logo-sub {
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--text-hint);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .header-center { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .search-wrap {
+    position: relative; max-width: 320px; flex: 1;
   }
-  .logo-icon { display: none; }
-  .header-center { flex: 1; display: flex; align-items: center; }
-  .search-wrap { position: relative; max-width: 300px; flex: 1; }
-  .search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-hint); font-size: 14px; }
+  .search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-hint); font-size: 15px; }
   .search-wrap input {
     width: 100%; padding: 7px 12px 7px 32px;
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-    background: var(--surface2); font-size: 12px; color: var(--text);
-    font-family: var(--sans); font-weight: 300; outline: none;
-    letter-spacing: 0.02em;
+    border: 0.5px solid var(--border); border-radius: var(--radius-md);
+    background: var(--surface2); font-size: 13px; color: var(--text);
+    outline: none;
   }
   .search-wrap input:focus { border-color: var(--border-md); background: var(--surface); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
   .avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--text); color: var(--surface);
-    font-size: 11px; font-weight: 500;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #EEEDFE; color: #3C3489;
+    font-size: 12px; font-weight: 600;
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--serif);
   }
 
   /* ── Layout ── */
-  .layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+  .layout {
+    display: flex;
+    margin-top: var(--header-h);
+    min-height: calc(100vh - var(--header-h));
+  }
 
   /* ── Sidebar ── */
   aside {
@@ -105,198 +92,194 @@
     width: var(--sidebar-w);
     height: calc(100vh - var(--header-h));
     background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 32px 20px;
-    display: flex; flex-direction: column; gap: 1px;
+    border-right: 0.5px solid var(--border);
+    padding: 16px 10px;
+    display: flex; flex-direction: column; gap: 2px;
     overflow-y: auto;
   }
-  .nav-section {
-    font-size: 9px; font-weight: 500; color: var(--text-hint);
-    letter-spacing: 0.16em; padding: 20px 8px 8px;
-    text-transform: uppercase;
-  }
+  .nav-section { font-size: 11px; font-weight: 600; color: var(--text-hint); letter-spacing: 0.06em; padding: 10px 8px 4px; text-transform: uppercase; }
   .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 8px; border-radius: var(--radius-md);
-    font-size: 12px; font-weight: 300; color: var(--text-muted);
-    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: var(--radius-md);
+    font-size: 13px; color: var(--text-muted);
     cursor: pointer; text-decoration: none;
-    transition: color 0.1s;
+    transition: background 0.1s, color 0.1s;
     border: none; background: none; width: 100%; text-align: left;
   }
-  .nav-item:hover { color: var(--text); }
-  .nav-item.active { color: var(--text); font-weight: 500; }
-  .nav-item i { font-size: 15px; width: 16px; flex-shrink: 0; opacity: 0.7; }
-  .nav-item.active i { opacity: 1; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); color: var(--text); font-weight: 500; }
+  .nav-item i { font-size: 16px; width: 18px; flex-shrink: 0; }
   .nav-badge {
-    margin-left: auto; font-size: 10px; font-weight: 500;
-    padding: 1px 7px; border-radius: 2px;
-    background: #f0ede4; color: #7a6a4a;
-    letter-spacing: 0.02em;
+    margin-left: auto; font-size: 11px; font-weight: 600;
+    padding: 1px 7px; border-radius: 99px;
+    background: #FAEEDA; color: #633806;
   }
-  .nav-badge.blue { background: #e8f0f8; color: #3a5a80; }
-  .nav-divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .nav-badge.blue { background: #E6F1FB; color: #0C447C; }
+  .nav-divider { height: 0.5px; background: var(--border); margin: 8px 0; }
 
   /* ── Main ── */
   main {
     margin-left: var(--sidebar-w);
     flex: 1;
-    padding: 40px 48px;
-    max-width: 1000px;
+    padding: 28px 32px;
+    max-width: 960px;
   }
 
   /* ── Page header ── */
   .page-header {
     display: flex; align-items: flex-start; justify-content: space-between;
-    margin-bottom: 36px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
   }
-  .page-title {
-    font-family: var(--serif);
-    font-size: 36px; font-weight: 500;
-    letter-spacing: -0.02em; line-height: 1.1;
-  }
-  .page-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; letter-spacing: 0.03em; font-weight: 300; }
+  .page-title { font-size: 22px; font-weight: 500; }
+  .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
 
   /* ── Summary cards ── */
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    margin-bottom: 40px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    gap: 10px;
+    margin-bottom: 24px;
   }
   .summary-card {
     background: var(--surface);
-    padding: 20px 22px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
   }
-  .summary-label { font-size: 10px; font-weight: 500; color: var(--text-hint); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; letter-spacing: 0.1em; text-transform: uppercase; }
-  .summary-num { font-family: var(--serif); font-size: 36px; font-weight: 400; line-height: 1; }
+  .summary-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .summary-num { font-size: 26px; font-weight: 500; }
 
   /* ── Buttons ── */
   .btn {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 8px 16px; border-radius: var(--radius-md);
-    font-size: 11px; font-weight: 500; cursor: pointer;
-    border: 1px solid var(--border-md);
+    padding: 7px 14px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 0.5px solid var(--border-md);
     background: transparent; color: var(--text);
-    letter-spacing: 0.06em; text-transform: uppercase;
-    transition: background 0.1s, border-color 0.1s;
-    font-family: var(--sans);
+    transition: background 0.1s;
   }
   .btn:hover { background: var(--surface2); }
-  .btn-primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+  .btn-primary { background: #1a1a18; color: #fff; border-color: #1a1a18; }
   .btn-primary:hover { background: #333; }
-  .btn-sm { padding: 6px 12px; font-size: 10px; }
-  .btn-success { background: #2d5a1b; color: #fff; border-color: #2d5a1b; }
-  .btn-success:hover { background: #1e3d12; }
-  .btn-danger { background: #8b2020; color: #fff; border-color: #8b2020; }
-  .btn-danger:hover { background: #6b1818; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-success { background: #639922; color: #fff; border-color: #639922; }
+  .btn-success:hover { background: #4e7a1a; }
+  .btn-danger { background: #E24B4A; color: #fff; border-color: #E24B4A; }
+  .btn-danger:hover { background: #c23837; }
   .btn-ghost { border-color: transparent; color: var(--text-muted); }
   .btn-ghost:hover { background: var(--surface2); color: var(--text); }
 
   /* ── Filter bar ── */
-  .filter-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px; }
-  .filter-btn {
-    padding: 5px 14px; border-radius: 2px; font-size: 10px; font-weight: 500;
-    border: 1px solid var(--border); background: var(--surface);
-    cursor: pointer; color: var(--text-muted);
-    letter-spacing: 0.08em; text-transform: uppercase;
-    transition: all 0.1s; font-family: var(--sans);
+  .filter-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 16px;
   }
-  .filter-btn.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500;
+    border: 0.5px solid var(--border); background: var(--surface);
+    cursor: pointer; color: var(--text-muted);
+    transition: all 0.1s;
+  }
+  .filter-btn.active { background: #1a1a18; color: #fff; border-color: #1a1a18; }
   .filter-btn:hover:not(.active) { border-color: var(--border-md); color: var(--text); }
 
   /* ── Cards ── */
-  .card-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
   .proposal-card {
     background: var(--surface);
-    padding: 20px 24px;
-    transition: background 0.1s;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    transition: border-color 0.15s;
   }
-  .proposal-card:hover { background: #faf9f7; }
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-  .card-title { font-family: var(--serif); font-size: 18px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
-  .card-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.6; font-weight: 300; }
+  .proposal-card:hover { border-color: var(--border-md); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-title { font-size: 15px; font-weight: 500; }
+  .card-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
   .badge {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-size: 9px; font-weight: 500; padding: 3px 8px;
-    border-radius: 2px; white-space: nowrap; flex-shrink: 0;
-    letter-spacing: 0.08em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 99px; white-space: nowrap; flex-shrink: 0;
   }
-  .badge-pending { background: #f5ede0; color: #7a5520; }
-  .badge-approved { background: #e4f0d8; color: #2d5a1b; }
-  .badge-designing { background: #ddeaf8; color: #1e4a7a; }
-  .badge-done { background: #eceaf8; color: #3d3080; }
-  .badge-rejected { background: #f5e0e0; color: #7a2020; }
+  .badge-pending { background: #FAEEDA; color: #633806; }
+  .badge-approved { background: #EAF3DE; color: #27500A; }
+  .badge-designing { background: #E6F1FB; color: #0C447C; }
+  .badge-done { background: #EEEDFE; color: #3C3489; }
+  .badge-rejected { background: #FCEBEB; color: #791F1F; }
 
   /* ── Progress ── */
-  .progress-wrap { margin: 14px 0 8px; }
-  .progress-bar { height: 1px; background: var(--surface2); overflow: hidden; }
-  .progress-fill { height: 100%; transition: width 0.4s; }
+  .progress-wrap { margin: 12px 0; }
+  .progress-bar {
+    height: 3px; background: var(--surface2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
 
   /* ── Meta row ── */
-  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 10px;
+  }
   .chip {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 10px; color: var(--text-hint); font-weight: 400;
-    letter-spacing: 0.04em;
+    font-size: 11px; color: var(--text-muted);
+    background: var(--surface2);
+    padding: 3px 9px; border-radius: var(--radius-md);
   }
-  .chip i { font-size: 10px; }
+  .chip i { font-size: 11px; }
 
   /* ── Card actions ── */
-  .card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); }
 
   /* ── Empty state ── */
-  .empty { text-align: center; padding: 64px 20px; color: var(--text-hint); font-size: 13px; font-weight: 300; }
-  .empty i { font-size: 28px; display: block; margin-bottom: 12px; color: var(--text-hint); opacity: 0.5; }
+  .empty {
+    text-align: center; padding: 48px 20px;
+    color: var(--text-muted); font-size: 14px;
+  }
+  .empty i { font-size: 36px; display: block; margin-bottom: 10px; color: var(--text-hint); }
 
   /* ── Modal ── */
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(17,17,16,0.5);
+    background: rgba(0,0,0,0.35);
     display: flex; align-items: center; justify-content: center;
     z-index: 200; opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.18s;
   }
   .modal-overlay.open { opacity: 1; pointer-events: auto; }
   .modal {
     background: var(--surface);
-    border: 1px solid var(--border-md);
-    width: 560px; max-width: 95vw;
-    padding: 36px;
-    transform: translateY(12px);
-    transition: transform 0.2s;
+    border-radius: var(--radius-xl);
+    width: 540px; max-width: 95vw;
+    padding: 28px;
+    transform: translateY(16px);
+    transition: transform 0.18s;
     max-height: 90vh; overflow-y: auto;
   }
   .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
-  .form-group { margin-bottom: 20px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-label { font-size: 10px; font-weight: 500; color: var(--text-hint); margin-bottom: 7px; display: block; letter-spacing: 0.1em; text-transform: uppercase; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 16px; font-weight: 500; }
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; display: block; }
   .form-control {
-    width: 100%; padding: 9px 12px;
-    border: 1px solid var(--border); border-bottom: 1px solid var(--border-md);
-    border-radius: 0;
-    font-size: 13px; font-family: var(--sans); font-weight: 300;
-    color: var(--text); background: var(--surface); outline: none;
+    width: 100%; padding: 8px 12px;
+    border: 0.5px solid var(--border-md); border-radius: var(--radius-md);
+    font-size: 14px; font-family: inherit; color: var(--text);
+    background: var(--surface); outline: none;
     transition: border-color 0.1s;
   }
-  .form-control:focus { border-color: var(--text); border-bottom-color: var(--text); }
+  .form-control:focus { border-color: #1a1a18; }
   textarea.form-control { resize: vertical; min-height: 88px; }
-  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 0.5px solid var(--border); }
 
   /* ── Toast ── */
   #toast {
-    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--text); color: var(--surface);
-    padding: 10px 22px; font-size: 11px; z-index: 999;
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1a1a18; color: #fff; border-radius: var(--radius-md);
+    padding: 10px 20px; font-size: 13px; z-index: 999;
     transition: transform 0.25s ease;
-    white-space: nowrap; letter-spacing: 0.06em;
-    font-family: var(--sans);
+    white-space: nowrap;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -306,67 +289,86 @@
 
   /* ── Detail timeline ── */
   .timeline { margin-top: 16px; display: flex; flex-direction: column; gap: 0; }
-  .tl-item { display: flex; gap: 16px; padding-bottom: 20px; position: relative; }
-  .tl-item:not(:last-child)::after { content: ''; position: absolute; left: 11px; top: 24px; width: 1px; bottom: 0; background: var(--border); }
-  .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; z-index: 1; }
-  .tl-dot.done { background: #e4f0d8; color: #2d5a1b; }
+  .tl-item {
+    display: flex; gap: 12px; padding-bottom: 16px;
+    position: relative;
+  }
+  .tl-item:not(:last-child)::after {
+    content: '';
+    position: absolute; left: 13px; top: 26px;
+    width: 1px; bottom: 0; background: var(--border);
+  }
+  .tl-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 12px; z-index: 1;
+  }
+  .tl-dot.done { background: #EAF3DE; color: #27500A; }
   .tl-dot.pending { background: var(--surface2); color: var(--text-hint); }
-  .tl-dot.active { background: #ddeaf8; color: #1e4a7a; }
+  .tl-dot.active { background: #E6F1FB; color: #0C447C; }
   .tl-content { flex: 1; }
-  .tl-label { font-size: 12px; font-weight: 500; }
-  .tl-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .tl-label { font-size: 13px; font-weight: 500; }
+  .tl-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
   /* ── Calendar ── */
   .cal-wrap {
     background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 24px;
-    margin-bottom: 40px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
   }
-  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .cal-title { font-family: var(--serif); font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
-  .cal-nav { display: flex; gap: 2px; }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-title { font-size: 15px; font-weight: 500; }
+  .cal-nav { display: flex; gap: 4px; }
   .cal-nav button {
-    width: 28px; height: 28px; border: 1px solid var(--border); background: none;
+    width: 28px; height: 28px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border); background: none;
     cursor: pointer; color: var(--text-muted);
-    display: flex; align-items: center; justify-content: center; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
   }
   .cal-nav button:hover { background: var(--surface2); }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+  }
   .cal-dow {
-    text-align: center; font-size: 9px; font-weight: 500;
-    color: var(--text-hint); padding: 6px 0; letter-spacing: 0.12em;
-    text-transform: uppercase; background: var(--surface);
+    text-align: center; font-size: 11px; font-weight: 600;
+    color: var(--text-hint); padding: 4px 0; letter-spacing: 0.04em;
   }
   .cal-day {
-    min-height: 64px; padding: 6px 7px;
-    border: none;
-    font-size: 11px; cursor: default; background: var(--surface);
+    min-height: 62px; padding: 5px 6px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid transparent;
+    font-size: 12px; cursor: default;
+    position: relative;
   }
-  .cal-day.other-month { opacity: 0.25; }
-  .cal-day.today { background: #faf9f0; }
-  .cal-day.has-event { background: #faf9f7; }
-  .cal-day-num { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-bottom: 4px; }
+  .cal-day.other-month { opacity: 0.3; }
+  .cal-day.today { border-color: #1a1a18; }
+  .cal-day.has-event { background: var(--surface2); border-color: var(--border); }
+  .cal-day-num { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 3px; }
   .cal-day.today .cal-day-num {
-    background: var(--text); color: var(--surface);
-    width: 18px; height: 18px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-size: 10px;
+    background: #1a1a18; color: #fff;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
   }
   .cal-event {
-    font-size: 9px; font-weight: 500;
-    padding: 1px 5px; border-radius: 1px;
+    font-size: 10px; font-weight: 500;
+    padding: 1px 5px; border-radius: 3px;
     margin-bottom: 2px; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis; line-height: 1.6;
-    letter-spacing: 0.02em;
+    overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.5;
   }
-  .cal-event.pending { background: #f5ede0; color: #7a5520; }
-  .cal-event.approved { background: #e4f0d8; color: #2d5a1b; }
-  .cal-event.designing { background: #ddeaf8; color: #1e4a7a; }
-  .cal-event.done { background: #eceaf8; color: #3d3080; }
-  .cal-event.deadline { background: #f5e0e0; color: #7a2020; }
-  .cal-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-hint); letter-spacing: 0.04em; }
-  .cal-legend-dot { width: 8px; height: 8px; border-radius: 1px; }
+  .cal-event.pending { background: #FAEEDA; color: #633806; }
+  .cal-event.approved { background: #EAF3DE; color: #27500A; }
+  .cal-event.designing { background: #E6F1FB; color: #0C447C; }
+  .cal-event.done { background: #EEEDFE; color: #3C3489; }
+  .cal-event.deadline { background: #FCEBEB; color: #791F1F; }
+  .cal-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+  .cal-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -374,8 +376,8 @@
 <!-- Header -->
 <header>
   <a class="logo" href="#" onclick="navigate('dashboard')">
-    <span class="logo-wordmark">Design</span>
-    <span class="logo-sub">Confirm</span>
+    <div class="logo-icon"><i class="ti ti-layout-dashboard"></i></div>
+    Design Hub
   </a>
   <div class="header-center">
     <div class="search-wrap">
@@ -515,7 +517,7 @@
     <div class="page" id="page-cosmetic">
       <div class="page-header">
         <div>
-          <h1 class="page-title">코스메틱 AI 분석</h1>
+          <h1 class="page-title"><i class="ti ti-sparkles" style="margin-right:6px;color:#7F77DD"></i>코스메틱 AI 분석</h1>
           <p class="page-sub">한국 화장품 시장 분석 · 타사 제품 비교 · 레퍼런스 수집</p>
         </div>
       </div>
@@ -530,11 +532,11 @@
 
       <!-- 레퍼런스 (기본 탭) -->
       <div id="csec-reference">
-        <div style="background:var(--surface2);border-left:2px solid var(--text);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-          <i class="ti ti-bulb" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-bulb" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
           <div>
-            <div style="font-size:11px;font-weight:500;color:var(--text);letter-spacing:0.06em;text-transform:uppercase;">이렇게 사용하세요</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:300;line-height:1.6;">참고하고 싶은 이미지를 찾아 <b>이미지 주소 복사</b> → 레퍼런스 추가에 붙여넣기 하면 바로 저장돼요. 배너·상세페이지·광고 카테고리로 분류해서 팀과 공유하세요.</div>
+            <div style="font-size:13px;font-weight:500;color:#3C3489;">이렇게 사용하세요</div>
+            <div style="font-size:12px;color:#534AB7;margin-top:2px;">참고하고 싶은 이미지를 찾아 <b>이미지 주소 복사</b> → 레퍼런스 추가에 붙여넣기 하면 바로 저장돼요. 배너·상세페이지·광고 카테고리로 분류해서 팀과 공유하세요.</div>
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -553,36 +555,36 @@
       <!-- 시장현황 -->
       <div id="csec-market" style="display:none;">
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-world"></i> 시장 규모</div><div class="summary-num">13.6조</div><div style="font-size:10px;color:var(--text-hint);margin-top:4px;letter-spacing:0.04em;">2024 기준</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-trending-up"></i> 수출 성장률</div><div class="summary-num">+21%</div><div style="font-size:10px;color:var(--text-hint);margin-top:4px;letter-spacing:0.04em;">전년 대비</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-ship"></i> 수출 1위국</div><div class="summary-num" style="font-size:22px;">중국·미국</div><div style="font-size:10px;color:var(--text-hint);margin-top:4px;letter-spacing:0.04em;">K-뷰티 글로벌</div></div>
-          <div class="summary-card"><div class="summary-label"><i class="ti ti-star"></i> 주요 채널</div><div class="summary-num" style="font-size:22px;">온라인</div><div style="font-size:10px;color:var(--text-hint);margin-top:4px;letter-spacing:0.04em;">비중 68%</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-world" style="color:#7F77DD"></i> 시장 규모</div><div class="summary-num" style="color:#7F77DD;font-size:18px;">13.6조</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">2024 기준</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-trending-up" style="color:#639922"></i> 수출 성장률</div><div class="summary-num" style="color:#639922;font-size:18px;">+21%</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">전년 대비</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-ship" style="color:#378ADD"></i> 수출 1위국</div><div class="summary-num" style="color:#378ADD;font-size:16px;">중국·미국</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">K-뷰티 글로벌</div></div>
+          <div class="summary-card"><div class="summary-label"><i class="ti ti-star" style="color:#BA7517"></i> 주요 채널</div><div class="summary-num" style="color:#BA7517;font-size:16px;">온라인</div><div style="font-size:11px;color:var(--text-hint);margin-top:2px;">비중 68%</div></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-bottom:1px;background:var(--border);">
-          <div style="background:var(--surface);padding:22px 24px;">
-            <h3 style="font-family:var(--serif);font-size:16px;font-weight:500;margin-bottom:16px;letter-spacing:-0.01em;">카테고리별 시장 점유율</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-chart-bar" style="margin-right:5px;color:#7F77DD"></i>카테고리별 시장 점유율</h3>
             <div id="market-chart-cat"></div>
           </div>
-          <div style="background:var(--surface);padding:22px 24px;">
-            <h3 style="font-family:var(--serif);font-size:16px;font-weight:500;margin-bottom:16px;letter-spacing:-0.01em;">2024 주요 트렌드</h3>
-            <div style="display:flex;flex-direction:column;gap:12px;" id="trend-list"></div>
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+            <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-trending-up" style="margin-right:5px;color:#378ADD"></i>2024 주요 트렌드</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;" id="trend-list"></div>
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);padding:22px 24px;">
-          <h3 style="font-family:var(--serif);font-size:16px;font-weight:500;margin-bottom:16px;letter-spacing:-0.01em;">주요 브랜드 포지셔닝</h3>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--border);" id="brand-grid"></div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;">
+          <h3 style="font-size:13px;font-weight:500;margin-bottom:14px;"><i class="ti ti-building" style="margin-right:5px;color:#639922"></i>주요 브랜드 포지셔닝</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;" id="brand-grid"></div>
         </div>
       </div>
 
       <!-- 타사분석 -->
       <div id="csec-competitor" style="display:none;">
-        <div style="background:var(--surface2);border-left:2px solid var(--text);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-          <i class="ti ti-building-store" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        <div style="background:#E6F1FB;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-building-store" style="font-size:20px;color:#0C447C;flex-shrink:0"></i>
           <div>
-            <div style="font-size:11px;font-weight:500;color:var(--text);letter-spacing:0.06em;text-transform:uppercase;">경쟁사 제품을 기록하세요</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:300;line-height:1.6;">아모레퍼시픽, LG생활건강 등 벤치마킹할 타사 제품을 등록하면 AI가 비교 분석해줘요. 브랜드·가격·패키징 스타일·타겟층을 정리해두세요.</div>
+            <div style="font-size:13px;font-weight:500;color:#0C447C;">경쟁사 제품을 기록하세요</div>
+            <div style="font-size:12px;color:#185FA5;margin-top:2px;">아모레퍼시픽, LG생활건강 등 벤치마킹할 타사 제품을 등록하면 AI가 비교 분석해줘요. 브랜드·가격·패키징 스타일·타겟층을 정리해두세요.</div>
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
@@ -593,57 +595,57 @@
 
       <!-- AI 인사이트 -->
       <div id="csec-ai" style="display:none;">
-        <div style="background:var(--surface2);border-left:2px solid var(--text);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-          <i class="ti ti-robot" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <i class="ti ti-robot" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
           <div>
-            <div style="font-size:11px;font-weight:500;color:var(--text);letter-spacing:0.06em;text-transform:uppercase;">AI에게 시장 분석을 맡기세요</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:300;line-height:1.6;">아래 버튼 중 하나를 누르거나 직접 질문하면 Claude AI가 한국 화장품 시장과 등록한 타사 제품을 바탕으로 분석해줍니다. API 키는 설정에서 등록하세요.</div>
+            <div style="font-size:13px;font-weight:500;color:#3C3489;">AI에게 시장 분석을 맡기세요</div>
+            <div style="font-size:12px;color:#534AB7;margin-top:2px;">아래 버튼 중 하나를 누르거나 직접 질문하면 Claude AI가 한국 화장품 시장과 등록한 타사 제품을 바탕으로 분석해줍니다. API 키는 설정에서 등록하세요.</div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin-bottom:20px;background:var(--border);border:1px solid var(--border);">
-          <button onclick="runAI('trend')" style="background:var(--surface);padding:20px;text-align:left;cursor:pointer;border:none;transition:background 0.1s;font-family:var(--sans);" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
-            <i class="ti ti-trending-up" style="font-size:16px;color:var(--text-muted);display:block;margin-bottom:10px"></i>
-            <div style="font-size:12px;font-weight:500;margin-bottom:4px;letter-spacing:0.02em;">트렌드 분석</div>
-            <div style="font-size:11px;color:var(--text-muted);font-weight:300;">2024~2025 K-뷰티 트렌드 요약</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+          <button onclick="runAI('trend')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-trending-up" style="font-size:20px;color:#639922;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">트렌드 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">2024~2025 K-뷰티 트렌드 요약</div>
           </button>
-          <button onclick="runAI('competitor')" style="background:var(--surface);padding:20px;text-align:left;cursor:pointer;border:none;transition:background 0.1s;font-family:var(--sans);" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
-            <i class="ti ti-building-store" style="font-size:16px;color:var(--text-muted);display:block;margin-bottom:10px"></i>
-            <div style="font-size:12px;font-weight:500;margin-bottom:4px;letter-spacing:0.02em;">경쟁사 분석</div>
-            <div style="font-size:11px;color:var(--text-muted);font-weight:300;">등록한 타사 제품 강약점 비교</div>
+          <button onclick="runAI('competitor')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-building-store" style="font-size:20px;color:#378ADD;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">경쟁사 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">등록한 타사 제품 강약점 비교</div>
           </button>
-          <button onclick="runAI('design')" style="background:var(--surface);padding:20px;text-align:left;cursor:pointer;border:none;transition:background 0.1s;font-family:var(--sans);" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
-            <i class="ti ti-palette" style="font-size:16px;color:var(--text-muted);display:block;margin-bottom:10px"></i>
-            <div style="font-size:12px;font-weight:500;margin-bottom:4px;letter-spacing:0.02em;">디자인 방향 제안</div>
-            <div style="font-size:11px;color:var(--text-muted);font-weight:300;">레퍼런스 기반 패키징·비주얼 방향</div>
+          <button onclick="runAI('design')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-palette" style="font-size:20px;color:#7F77DD;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">디자인 방향 제안</div>
+            <div style="font-size:12px;color:var(--text-muted);">레퍼런스 기반 패키징·비주얼 방향</div>
           </button>
-          <button onclick="runAI('target')" style="background:var(--surface);padding:20px;text-align:left;cursor:pointer;border:none;transition:background 0.1s;font-family:var(--sans);" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
-            <i class="ti ti-target" style="font-size:16px;color:var(--text-muted);display:block;margin-bottom:10px"></i>
-            <div style="font-size:12px;font-weight:500;margin-bottom:4px;letter-spacing:0.02em;">타겟 소비자 분석</div>
-            <div style="font-size:11px;color:var(--text-muted);font-weight:300;">연령·라이프스타일별 구매 행동</div>
+          <button onclick="runAI('target')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+            <i class="ti ti-target" style="font-size:20px;color:#D85A30;display:block;margin-bottom:8px"></i>
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">타겟 소비자 분석</div>
+            <div style="font-size:12px;color:var(--text-muted);">연령·라이프스타일별 구매 행동</div>
           </button>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);padding:18px 20px;margin-bottom:16px;">
-          <label class="form-label" style="margin-bottom:10px;"><i class="ti ti-message" style="margin-right:4px"></i>직접 질문하기</label>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;">
+          <label class="form-label" style="margin-bottom:8px;"><i class="ti ti-message" style="margin-right:4px"></i>직접 질문하기</label>
           <div style="display:flex;gap:8px;">
             <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" style="flex:1" />
             <button class="btn btn-primary" onclick="runAI('custom')" style="flex-shrink:0"><i class="ti ti-send"></i> 분석</button>
           </div>
         </div>
 
-        <div id="ai-result-wrap" style="display:none;background:var(--surface);border:1px solid var(--border);padding:24px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
-            <i class="ti ti-robot" style="font-size:14px;color:var(--text-muted);"></i>
-            <span style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;">AI 분석 결과</span>
-            <span id="ai-loading" style="font-size:11px;color:var(--text-muted);display:none;margin-left:4px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
+        <div id="ai-result-wrap" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:14px;color:#3C3489;"><i class="ti ti-robot"></i></div>
+            <span style="font-size:13px;font-weight:500;">AI 분석 결과</span>
+            <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;margin-left:4px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
           </div>
-          <div id="ai-result" style="font-size:13px;line-height:1.9;color:var(--text);white-space:pre-wrap;font-weight:300;"></div>
+          <div id="ai-result" style="font-size:14px;line-height:1.9;color:var(--text);white-space:pre-wrap;"></div>
         </div>
 
-        <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;display:flex;align-items:flex-start;gap:8px;">
-          <i class="ti ti-info-circle" style="color:var(--text-hint);flex-shrink:0;font-size:12px;margin-top:1px;"></i>
-          <p style="font-size:11px;color:var(--text-hint);font-weight:300;line-height:1.6;">AI 기능은 <b style="font-weight:500;">설정 → Claude API 키</b>를 등록해야 작동합니다. API 키는 <a href="https://console.anthropic.com" target="_blank" style="color:var(--text);text-decoration:underline;">console.anthropic.com</a>에서 발급받으세요.</p>
+        <div style="background:var(--surface2);border-radius:var(--radius-md);padding:12px 16px;margin-top:12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-info-circle" style="color:var(--text-hint);flex-shrink:0"></i>
+          <p style="font-size:12px;color:var(--text-muted);">AI 기능은 <b>설정 → Claude API 키</b>를 등록해야 작동합니다. API 키는 <a href="https://console.anthropic.com" target="_blank" style="color:#534AB7">console.anthropic.com</a>에서 발급받으세요.</p>
         </div>
       </div>
     </div>
@@ -651,8 +653,8 @@
     <!-- Settings -->
     <div class="page" id="page-settings">
       <div class="page-header"><div><h1 class="page-title">설정</h1><p class="page-sub">앱 환경을 설정합니다</p></div></div>
-      <div style="background:var(--surface);border:1px solid var(--border);padding:28px 32px;max-width:480px;">
-        <h3 style="font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:20px;letter-spacing:-0.01em;">담당자 정보</h3>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;max-width:480px;">
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:14px;">담당자 정보</h3>
         <div class="form-group">
           <label class="form-label">디자이너 이름</label>
           <input class="form-control" id="setting-name" type="text" placeholder="이름 입력" />
@@ -661,16 +663,16 @@
           <label class="form-label">부서</label>
           <input class="form-control" id="setting-dept" type="text" placeholder="예: 디자인팀" />
         </div>
-        <div class="nav-divider" style="margin:24px 0;"></div>
-        <h3 style="font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:20px;letter-spacing:-0.01em;">Claude API 설정</h3>
+        <div class="nav-divider" style="margin:20px 0;"></div>
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:14px;"><i class="ti ti-robot" style="margin-right:5px;color:#7F77DD"></i>Claude API 설정</h3>
         <div class="form-group">
           <label class="form-label">API Key</label>
           <input class="form-control" id="setting-apikey" type="password" placeholder="sk-ant-..." />
-          <p style="font-size:11px;color:var(--text-hint);margin-top:6px;font-weight:300;">코스메틱 AI 인사이트 기능에 사용됩니다. 키는 브라우저에만 저장됩니다.</p>
+          <p style="font-size:11px;color:var(--text-hint);margin-top:4px;">코스메틱 AI 인사이트 기능에 사용됩니다. 키는 브라우저에만 저장됩니다.</p>
         </div>
         <button class="btn btn-primary" onclick="saveSettings()">저장</button>
-        <div class="nav-divider" style="margin:24px 0;"></div>
-        <h3 style="font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:14px;letter-spacing:-0.01em;">데이터 관리</h3>
+        <div class="nav-divider" style="margin:20px 0;"></div>
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:10px;">데이터 관리</h3>
         <button class="btn btn-danger btn-sm" onclick="clearAll()"><i class="ti ti-trash"></i> 전체 데이터 초기화</button>
       </div>
     </div>
@@ -725,9 +727,9 @@
     <div class="form-group">
       <label class="form-label">긴급도</label>
       <div style="display:flex;gap:6px;">
-        <button type="button" class="urgency-btn" id="urg-low"    onclick="selectUrgency('low',this)"    style="flex:1;padding:8px 12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;font-weight:400;color:var(--text-muted);letter-spacing:0.04em;font-family:var(--sans);">여유</button>
-        <button type="button" class="urgency-btn" id="urg-normal" onclick="selectUrgency('normal',this)" style="flex:1;padding:8px 12px;border:1px solid var(--text);background:var(--text);cursor:pointer;font-size:11px;font-weight:500;color:var(--surface);letter-spacing:0.04em;font-family:var(--sans);">보통</button>
-        <button type="button" class="urgency-btn" id="urg-high"   onclick="selectUrgency('high',this)"   style="flex:1;padding:8px 12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;font-weight:400;color:var(--text-muted);letter-spacing:0.04em;font-family:var(--sans);">긴급</button>
+        <button type="button" class="urgency-btn" id="urg-low"    onclick="selectUrgency('low',this)"    style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:500;color:var(--text-muted);">🟢 여유</button>
+        <button type="button" class="urgency-btn" id="urg-normal" onclick="selectUrgency('normal',this)" style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid #378ADD;background:#E6F1FB;cursor:pointer;font-size:12px;font-weight:500;color:#0C447C;">🟡 보통</button>
+        <button type="button" class="urgency-btn" id="urg-high"   onclick="selectUrgency('high',this)"   style="flex:1;padding:8px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:500;color:var(--text-muted);">🔴 긴급</button>
       </div>
       <input type="hidden" id="inp-urgency" value="normal" />
     </div>
@@ -973,7 +975,7 @@ function renderCard(p) {
         ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-        ${p.urgency === 'high' ? `<span style="font-size:9px;font-weight:500;padding:3px 8px;border-radius:2px;background:#8b2020;color:#fff;letter-spacing:0.08em;text-transform:uppercase;">긴급</span>` : p.urgency === 'low' ? `<span style="font-size:9px;font-weight:500;padding:3px 8px;border-radius:2px;background:var(--surface2);color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;">여유</span>` : ''}
+        ${p.urgency && p.urgency !== 'normal' ? `<span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;background:${URGENCY[p.urgency]?.bg};color:${URGENCY[p.urgency]?.color}">${URGENCY[p.urgency]?.emoji} ${URGENCY[p.urgency]?.label}</span>` : ''}
         <span class="badge ${badgeClass(p.status)}">${STATUSES[p.status]}</span>
       </div>
     </div>
@@ -1061,15 +1063,16 @@ function selectUrgency(val, btn) {
   document.getElementById('inp-urgency').value = val;
   ['urg-low','urg-normal','urg-high'].forEach(id => {
     const b = document.getElementById(id);
+    const key = id.replace('urg-','');
+    const u = URGENCY[key];
     b.style.background = 'var(--surface)';
     b.style.borderColor = 'var(--border)';
     b.style.color = 'var(--text-muted)';
-    b.style.fontWeight = '400';
   });
-  btn.style.background = 'var(--text)';
-  btn.style.borderColor = 'var(--text)';
-  btn.style.color = 'var(--surface)';
-  btn.style.fontWeight = '500';
+  const u = URGENCY[val];
+  btn.style.background = u.bg;
+  btn.style.borderColor = u.color;
+  btn.style.color = u.color;
 }
 
 function openModal() {
@@ -1210,28 +1213,30 @@ const BRANDS = [
 function renderMarket() {
   const catEl = document.getElementById('market-chart-cat');
   catEl.innerHTML = MARKET_CATS.map(c => `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <span style="font-size:11px;color:var(--text-muted);width:60px;flex-shrink:0;font-weight:300;">${c.label}</span>
-      <div style="flex:1;height:2px;background:var(--surface2);overflow:hidden;">
-        <div style="height:100%;width:${c.pct}%;background:var(--text);"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:12px;color:var(--text-muted);width:56px;flex-shrink:0">${c.label}</span>
+      <div style="flex:1;height:16px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${c.pct}%;background:${c.color};border-radius:4px;"></div>
       </div>
-      <span style="font-family:var(--serif);font-size:14px;font-weight:500;width:32px;text-align:right;">${c.pct}%</span>
+      <span style="font-size:12px;font-weight:500;width:28px;text-align:right">${c.pct}%</span>
     </div>`).join('');
 
   document.getElementById('trend-list').innerHTML = TRENDS.map(t => `
-    <div style="display:flex;gap:12px;align-items:flex-start;">
-      <i class="ti ${t.icon}" style="font-size:14px;color:var(--text-muted);margin-top:2px;flex-shrink:0;"></i>
+    <div style="display:flex;gap:10px;align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:6px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#3C3489;font-size:14px;">
+        <i class="ti ${t.icon}"></i>
+      </div>
       <div>
-        <div style="font-size:12px;font-weight:500;letter-spacing:0.02em;">${t.label}</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:300;">${t.desc}</div>
+        <div style="font-size:13px;font-weight:500;">${t.label}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">${t.desc}</div>
       </div>
     </div>`).join('');
 
   document.getElementById('brand-grid').innerHTML = BRANDS.map(b => `
-    <div style="background:var(--surface);padding:14px 16px;">
-      <div style="font-size:12px;font-weight:500;">${b.name}</div>
-      <div style="font-size:10px;color:var(--text-hint);margin-top:2px;letter-spacing:0.06em;text-transform:uppercase;">${b.tier}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;font-weight:300;">${b.tag}</div>
+    <div style="background:${b.color};border-radius:var(--radius-md);padding:12px 14px;">
+      <div style="font-size:13px;font-weight:500;color:${b.tc}">${b.name}</div>
+      <div style="font-size:11px;color:${b.tc};opacity:0.75;margin-top:2px;">${b.tier}</div>
+      <div style="font-size:11px;color:${b.tc};margin-top:6px;">${b.tag}</div>
     </div>`).join('');
 }
 
@@ -1275,22 +1280,22 @@ function renderCompetitors() {
     return;
   }
   grid.innerHTML = competitors.map(c => `
-    <div style="background:var(--surface);border:1px solid var(--border);overflow:hidden;">
-      ${c.img ? `<img src="${c.img}" style="width:100%;height:140px;object-fit:cover;" onerror="this.style.display='none'" />` : `<div style="height:60px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint);font-size:20px;"><i class="ti ti-photo-off"></i></div>`}
-      <div style="padding:14px 16px;">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+      ${c.img ? `<img src="${c.img}" style="width:100%;height:140px;object-fit:cover;" onerror="this.style.display='none'" />` : `<div style="height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint);font-size:28px;"><i class="ti ti-photo-off"></i></div>`}
+      <div style="padding:12px 14px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
           <div>
-            <div style="font-size:10px;color:var(--text-hint);letter-spacing:0.06em;text-transform:uppercase;">${c.brand}</div>
-            <div style="font-family:var(--serif);font-size:15px;font-weight:500;margin-top:2px;letter-spacing:-0.01em;">${c.product}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${c.brand}</div>
+            <div style="font-size:14px;font-weight:500;margin-top:1px;">${c.product}</div>
           </div>
           ${c.category ? `<span class="badge badge-designing" style="flex-shrink:0">${c.category}</span>` : ''}
         </div>
-        ${c.price ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;font-weight:300;"><i class="ti ti-tag" style="font-size:10px"></i> ${c.price}</div>` : ''}
-        ${c.target ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-weight:300;"><i class="ti ti-target" style="font-size:10px"></i> ${c.target}</div>` : ''}
-        ${c.feature ? `<div style="font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:8px;margin-top:10px;font-weight:300;line-height:1.6;">${c.feature}</div>` : ''}
-        ${c.design ? `<div style="font-size:11px;margin-top:4px;color:var(--text-muted);font-weight:300;"><i class="ti ti-palette" style="font-size:10px"></i> ${c.design}</div>` : ''}
-        ${c.memo ? `<div style="font-size:10px;color:var(--text-hint);margin-top:6px;font-style:italic;font-weight:300;">${c.memo}</div>` : ''}
-        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
+        ${c.price ? `<div style="font-size:12px;color:var(--text-muted);margin-top:6px;"><i class="ti ti-tag" style="font-size:11px"></i> ${c.price}</div>` : ''}
+        ${c.target ? `<div style="font-size:12px;color:var(--text-muted);margin-top:3px;"><i class="ti ti-target" style="font-size:11px"></i> ${c.target}</div>` : ''}
+        ${c.feature ? `<div style="font-size:12px;color:var(--text-muted);margin-top:3px;border-top:0.5px solid var(--border);padding-top:6px;margin-top:8px;">${c.feature}</div>` : ''}
+        ${c.design ? `<div style="font-size:12px;margin-top:4px;"><i class="ti ti-palette" style="font-size:11px;color:#7F77DD"></i> <span style="color:#3C3489">${c.design}</span></div>` : ''}
+        ${c.memo ? `<div style="font-size:11px;color:var(--text-hint);margin-top:6px;font-style:italic;">${c.memo}</div>` : ''}
+        <div style="margin-top:10px;padding-top:8px;border-top:0.5px solid var(--border);display:flex;justify-content:flex-end;">
           <button class="btn btn-ghost btn-sm" onclick="delComp(${c.id})"><i class="ti ti-trash"></i></button>
         </div>
       </div>
@@ -1374,21 +1379,21 @@ function renderReferences() {
     return;
   }
   grid.innerHTML = list.map(r => `
-    <div style="background:var(--surface);border:1px solid var(--border);overflow:hidden;">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
       <div style="position:relative;">
-        <img src="${r.img}" style="width:100%;height:150px;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div style=height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:20px></i></div>'" />
-        ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:22px;height:22px;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:11px;"><i class="ti ti-external-link"></i></a>` : ''}
+        <img src="${r.img}" style="width:100%;height:150px;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
+        ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
       </div>
       <div style="padding:10px 12px;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-          ${r.category ? `<span class="badge badge-designing">${r.category}</span>` : ''}
-          ${r.title ? `<span style="font-size:12px;font-weight:500;">${r.title}</span>` : ''}
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          ${r.category ? `<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;background:${REF_CAT_COLOR[r.category]||'#f0efe9'};color:${REF_CAT_TC[r.category]||'#444'}">${r.category}</span>` : ''}
+          ${r.title ? `<span style="font-size:13px;font-weight:500;">${r.title}</span>` : ''}
         </div>
-        ${r.tags.length ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${r.tags.map(t=>`<span style="font-size:10px;padding:2px 8px;border:1px solid var(--border);color:var(--text-muted);font-weight:300;">${t}</span>`).join('')}</div>` : ''}
-        ${r.memo ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:300;">${r.memo}</div>` : ''}
-        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:10px;color:var(--text-hint);letter-spacing:0.04em;">${r.addedAt}</span>
-          <button class="btn btn-ghost btn-sm" onclick="delRef(${r.id})" style="padding:2px 6px;"><i class="ti ti-trash" style="font-size:11px"></i></button>
+        ${r.tags.length ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${r.tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#EEEDFE;color:#3C3489;">${t}</span>`).join('')}</div>` : ''}
+        ${r.memo ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${r.memo}</div>` : ''}
+        <div style="margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;color:var(--text-hint)">${r.addedAt}</span>
+          <button class="btn btn-ghost btn-sm" onclick="delRef(${r.id})" style="padding:2px 6px;"><i class="ti ti-trash" style="font-size:12px"></i></button>
         </div>
       </div>
     </div>`).join('');
