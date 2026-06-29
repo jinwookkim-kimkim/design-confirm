@@ -972,7 +972,7 @@
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title"><i class="ti ti-file-plus" style="margin-right:6px"></i>새 기안 작성</span>
+      <span class="modal-title"><i class="ti ti-file-plus" style="margin-right:6px"></i><span id="modal-title-text">기안 작성</span></span>
       <button class="btn btn-ghost btn-sm" onclick="closeModal()"><i class="ti ti-x"></i></button>
     </div>
     <div class="form-group">
@@ -1028,7 +1028,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal()">취소</button>
-      <button class="btn btn-primary" onclick="submitProposal()"><i class="ti ti-send"></i> 기안 제출</button>
+      <button class="btn btn-primary" id="modal-submit-btn" onclick="submitProposal()"><i class="ti ti-send"></i> 기안 제출</button>
     </div>
   </div>
 </div>
@@ -1327,6 +1327,7 @@ function renderCard(p) {
   if(p.status === 'pending') {
     actions.push(`<button class="btn btn-success btn-sm" onclick="approve(${p.id})"><i class="ti ti-check"></i> 결재 승인</button>`);
     actions.push(`<button class="btn btn-danger btn-sm" onclick="reject(${p.id})"><i class="ti ti-x"></i> 반려</button>`);
+    actions.push(`<button class="btn btn-sm" onclick="editProposal(${p.id})"><i class="ti ti-pencil"></i> 수정</button>`);
   }
   if(p.status === 'approved') {
     actions.push(`<button class="btn btn-primary btn-sm" onclick="startDesign(${p.id})"><i class="ti ti-player-play"></i> 디자인 시작</button>`);
@@ -1447,7 +1448,12 @@ function selectUrgency(val, btn) {
   btn.style.color = u.color;
 }
 
+let editingId = null;
+
 function openModal() {
+  editingId = null;
+  document.getElementById('modal-title-text').textContent = '기안 작성';
+  document.getElementById('modal-submit-btn').textContent = '기안 제출';
   document.getElementById('inp-date').value = today();
   document.getElementById('inp-title').value = '';
   document.getElementById('inp-desc').value = '';
@@ -1459,7 +1465,26 @@ function openModal() {
   document.getElementById('modal-overlay').classList.add('open');
   setTimeout(() => document.getElementById('inp-title').focus(), 100);
 }
-function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function editProposal(id) {
+  const p = proposals.find(x => x.id === id);
+  if(!p) return;
+  editingId = id;
+  document.getElementById('modal-title-text').textContent = '기안 수정';
+  document.getElementById('modal-submit-btn').textContent = '수정 완료';
+  document.getElementById('inp-title').value = p.title || '';
+  document.getElementById('inp-desc').value = p.desc || '';
+  document.getElementById('inp-url').value = p.url || '';
+  document.getElementById('inp-author').value = p.author || '';
+  document.getElementById('inp-date').value = p.date || '';
+  document.getElementById('inp-deadline').value = p.deadline || '';
+  document.getElementById('inp-category').value = p.category || '';
+  selectUrgency(p.urgency || 'normal', document.getElementById('urg-' + (p.urgency || 'normal')));
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('inp-title').focus(), 100);
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingId = null; }
 function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
 
 document.addEventListener('keydown', e => {
@@ -1469,6 +1494,27 @@ document.addEventListener('keydown', e => {
 function submitProposal() {
   const title = document.getElementById('inp-title').value.trim();
   if(!title) { toast('프로젝트명을 입력하세요'); document.getElementById('inp-title').focus(); return; }
+
+  if(editingId !== null) {
+    const idx = proposals.findIndex(x => x.id === editingId);
+    if(idx !== -1) {
+      proposals[idx] = {
+        ...proposals[idx],
+        title,
+        desc: document.getElementById('inp-desc').value.trim(),
+        url: document.getElementById('inp-url').value.trim(),
+        author: document.getElementById('inp-author').value.trim(),
+        date: document.getElementById('inp-date').value,
+        deadline: document.getElementById('inp-deadline').value,
+        category: document.getElementById('inp-category').value,
+        urgency: document.getElementById('inp-urgency').value || 'normal',
+      };
+    }
+    save(); closeModal(); renderAll();
+    toast('기안이 수정되었습니다');
+    return;
+  }
+
   proposals.unshift({
     id: nextId++,
     title,
