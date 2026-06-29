@@ -1594,7 +1594,7 @@ let refCatFilter = 'all';
 function saveComp() { localStorage.setItem('competitors', JSON.stringify(competitors)); }
 function saveRef()  { localStorage.setItem('references',  JSON.stringify(references)); }
 
-function cTab(name, btn) {
+
 function cTab(name, btn) {
   ['competitor','reference','ai'].forEach(t => {
     document.getElementById('csec-'+t).style.display = t===name ? '' : 'none';
