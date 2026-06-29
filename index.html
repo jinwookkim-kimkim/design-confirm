@@ -397,9 +397,249 @@
   .cal-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
   .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
   .cal-legend-dot { width: 8px; height: 8px; border-radius: 3px; }
+
+  /* ── Landing Page ── */
+  #landing {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    z-index: 500;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  #landing.hide {
+    opacity: 0; pointer-events: none; transform: translateY(-24px);
+  }
+  .landing-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 48px;
+  }
+  .landing-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; font-weight: 700; color: var(--text);
+    text-decoration: none; letter-spacing: -0.3px;
+  }
+  .landing-logo-icon {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, #c4956a, #8B6B4A);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px;
+    box-shadow: 0 2px 8px rgba(139,107,74,0.35);
+  }
+  .hamburger-btn {
+    width: 44px; height: 44px; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--surface);
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 5px;
+    transition: all 0.2s; box-shadow: 0 2px 8px rgba(139,107,74,0.08);
+  }
+  .hamburger-btn:hover { background: var(--accent-pale); border-color: var(--accent-light); }
+  .hamburger-btn span {
+    display: block; width: 18px; height: 1.5px;
+    background: var(--text); border-radius: 2px;
+    transition: all 0.25s;
+  }
+  .hamburger-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .landing-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: flex-start; justify-content: center;
+    padding: 0 48px 0 56px;
+    gap: 0;
+  }
+  .landing-eyebrow {
+    font-size: 12px; font-weight: 600; color: var(--accent-light);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .landing-title {
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 800; color: var(--text);
+    line-height: 1.0; letter-spacing: -3px;
+    margin-bottom: 28px;
+  }
+  .landing-title span {
+    background: linear-gradient(135deg, #c4956a 0%, #8B6B4A 60%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .landing-desc {
+    font-size: 17px; color: var(--text-muted); font-weight: 400;
+    line-height: 1.7; margin-bottom: 44px; max-width: 460px;
+  }
+  .landing-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #c4956a, #8B6B4A);
+    color: #fff; font-size: 15px; font-weight: 700;
+    border: none; cursor: pointer; letter-spacing: -0.2px;
+    box-shadow: 0 8px 24px rgba(139,107,74,0.35);
+    transition: all 0.2s; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .landing-cta:hover {
+    box-shadow: 0 12px 32px rgba(139,107,74,0.45);
+    transform: translateY(-2px);
+  }
+  .landing-cta i { font-size: 18px; transition: transform 0.2s; }
+  .landing-cta:hover i { transform: translateX(4px); }
+
+  .landing-stats {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: stretch;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .landing-stat {
+    flex: 1; padding: 24px 0; text-align: center;
+    border-right: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .landing-stat:last-child { border-right: none; }
+  .landing-stat:hover { background: var(--accent-pale); }
+  .landing-stat-num {
+    font-size: 32px; font-weight: 800; color: var(--accent);
+    letter-spacing: -1px; line-height: 1;
+  }
+  .landing-stat-label {
+    font-size: 11px; color: var(--text-hint); font-weight: 600;
+    letter-spacing: 0.08em; margin-top: 6px; text-transform: uppercase;
+  }
+  .landing-deco {
+    position: absolute; right: 48px; top: 50%; transform: translateY(-50%);
+    font-size: clamp(160px, 20vw, 280px); font-weight: 900;
+    color: rgba(139,107,74,0.05); letter-spacing: -8px; line-height: 1;
+    pointer-events: none; user-select: none;
+  }
+
+  /* ── Slide Menu ── */
+  #slide-menu-overlay {
+    position: fixed; inset: 0; background: rgba(43,29,14,0.3);
+    z-index: 600; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; backdrop-filter: blur(2px);
+  }
+  #slide-menu-overlay.open { opacity: 1; pointer-events: auto; }
+  #slide-menu {
+    position: fixed; top: 0; right: -340px; width: 320px; height: 100vh;
+    background: var(--surface); z-index: 700;
+    padding: 36px 32px; display: flex; flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: -8px 0 40px rgba(139,107,74,0.15);
+  }
+  #slide-menu.open { right: 0; }
+  .slide-menu-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 40px;
+  }
+  .slide-menu-title { font-size: 14px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .slide-close-btn {
+    width: 36px; height: 36px; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 16px; transition: all 0.15s;
+  }
+  .slide-close-btn:hover { background: var(--accent-pale); color: var(--accent); }
+  .slide-menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border-radius: var(--radius-md);
+    font-size: 15px; font-weight: 500; color: var(--text);
+    cursor: pointer; border: none; background: none; width: 100%;
+    text-align: left; transition: all 0.15s; margin-bottom: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .slide-menu-item i { font-size: 20px; color: var(--accent-light); width: 24px; }
+  .slide-menu-item:hover { background: var(--accent-pale); color: var(--accent); }
+  .slide-menu-item:hover i { color: var(--accent); }
+  .slide-menu-divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .slide-menu-footer {
+    margin-top: auto; font-size: 11px; color: var(--text-hint);
+    letter-spacing: 0.05em; text-align: center;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .landing-eyebrow { animation: fadeInUp 0.6s ease 0.1s both; }
+  .landing-title   { animation: fadeInUp 0.6s ease 0.2s both; }
+  .landing-desc    { animation: fadeInUp 0.6s ease 0.3s both; }
+  .landing-cta     { animation: fadeInUp 0.6s ease 0.4s both; }
+  .landing-stats   { animation: fadeInUp 0.5s ease 0.5s both; }
 </style>
 </head>
 <body>
+
+<!-- ══ LANDING PAGE ══ -->
+<div id="landing">
+
+  <!-- Slide Menu Overlay -->
+  <div id="slide-menu-overlay" onclick="closeSlideMenu()"></div>
+
+  <!-- Slide Menu -->
+  <div id="slide-menu">
+    <div class="slide-menu-header">
+      <span class="slide-menu-title">메뉴</span>
+      <button class="slide-close-btn" onclick="closeSlideMenu()"><i class="ti ti-x"></i></button>
+    </div>
+    <button class="slide-menu-item" onclick="enterApp('dashboard')"><i class="ti ti-calendar"></i> 디자인 현황 캘린더</button>
+    <button class="slide-menu-item" onclick="enterApp('all')"><i class="ti ti-list"></i> 전체 기안</button>
+    <div class="slide-menu-divider"></div>
+    <button class="slide-menu-item" onclick="enterApp('pending')"><i class="ti ti-clock"></i> 결재 대기</button>
+    <button class="slide-menu-item" onclick="enterApp('approved')"><i class="ti ti-circle-check"></i> 결재 완료</button>
+    <button class="slide-menu-item" onclick="enterApp('designing')"><i class="ti ti-pencil"></i> 디자인 진행</button>
+    <button class="slide-menu-item" onclick="enterApp('done')"><i class="ti ti-checks"></i> 디자인 완료</button>
+    <div class="slide-menu-divider"></div>
+    <button class="slide-menu-item" onclick="enterApp('cosmetic')"><i class="ti ti-sparkles"></i> 코스메틱 AI 분석</button>
+    <button class="slide-menu-item" onclick="enterApp('settings')"><i class="ti ti-settings"></i> 설정</button>
+    <div class="slide-menu-footer">Design Confirm · 라로제 디자인팀</div>
+  </div>
+
+  <!-- Landing Header -->
+  <div class="landing-header">
+    <a class="landing-logo" href="#">
+      <div class="landing-logo-icon"><i class="ti ti-layout-dashboard"></i></div>
+      Design Confirm
+    </a>
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSlideMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Deco text (배경 장식) -->
+  <div class="landing-deco">DC</div>
+
+  <!-- Landing Body -->
+  <div class="landing-body">
+    <div class="landing-eyebrow">라로제 디자인팀</div>
+    <div class="landing-title">Design<br><span>Confirm</span></div>
+    <p class="landing-desc">기안부터 결재, 디자인 시작과 완료까지<br>팀의 모든 작업을 한눈에 관리하세요.</p>
+    <button class="landing-cta" onclick="enterApp('dashboard')">
+      앱 시작하기 <i class="ti ti-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Landing Stats -->
+  <div class="landing-stats">
+    <div class="landing-stat">
+      <div class="landing-stat-num" id="ls-pending">0</div>
+      <div class="landing-stat-label">결재 대기</div>
+    </div>
+    <div class="landing-stat">
+      <div class="landing-stat-num" id="ls-designing">0</div>
+      <div class="landing-stat-label">디자인 진행</div>
+    </div>
+    <div class="landing-stat">
+      <div class="landing-stat-num" id="ls-done">0</div>
+      <div class="landing-stat-label">디자인 완료</div>
+    </div>
+    <div class="landing-stat">
+      <div class="landing-stat-num" id="ls-total">0</div>
+      <div class="landing-stat-label">전체</div>
+    </div>
+  </div>
+
+</div>
+<!-- ══ APP SHELL ══ -->
+<div id="app-shell" style="display:none;">
 
 <!-- Header -->
 <header>
@@ -708,6 +948,8 @@
   </main>
 </div>
 
+</div><!-- /#app-shell -->
+
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
@@ -876,6 +1118,50 @@
 <div id="toast"></div>
 
 <script>
+/* ── Landing Page ── */
+function enterApp(page) {
+  const landing = document.getElementById('landing');
+  const appShell = document.getElementById('app-shell');
+  landing.classList.add('hide');
+  setTimeout(() => {
+    landing.style.display = 'none';
+    appShell.style.display = 'block';
+    navigate(page || 'dashboard');
+  }, 600);
+  closeSlideMenu();
+}
+
+function toggleSlideMenu() {
+  const menu = document.getElementById('slide-menu');
+  const overlay = document.getElementById('slide-menu-overlay');
+  const btn = document.getElementById('hamburger-btn');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function closeSlideMenu() {
+  document.getElementById('slide-menu').classList.remove('open');
+  document.getElementById('slide-menu-overlay').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+}
+
+function updateLandingStats() {
+  const data = JSON.parse(localStorage.getItem('proposals') || '[]');
+  document.getElementById('ls-pending').textContent   = data.filter(p => p.status === 'pending').length;
+  document.getElementById('ls-designing').textContent = data.filter(p => p.status === 'designing').length;
+  document.getElementById('ls-done').textContent      = data.filter(p => p.status === 'done').length;
+  document.getElementById('ls-total').textContent     = data.length;
+}
+updateLandingStats();
+
 const STATUSES = { pending:'결재 대기', approved:'결재 완료', designing:'디자인 진행', done:'디자인 완료', rejected:'반려' };
 
 let calYear, calMonth;
