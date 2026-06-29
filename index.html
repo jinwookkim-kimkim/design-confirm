@@ -625,9 +625,6 @@
     </button>
   </div>
 
-  <!-- Particles -->
-  <canvas id="landing-canvas"></canvas>
-
   <!-- Deco text (배경 장식) -->
   <div class="landing-deco">DC</div>
 
@@ -1176,54 +1173,6 @@ function closeSlideMenu() {
   document.getElementById('slide-menu-overlay').classList.remove('open');
   document.getElementById('hamburger-btn').classList.remove('open');
 }
-
-/* ── Particles ── */
-(function() {
-  const canvas = document.getElementById('landing-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [];
-
-  function resize() {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  const COLORS = ['rgba(196,149,106,', 'rgba(139,107,74,', 'rgba(240,228,212,', 'rgba(180,130,90,'];
-
-  function rand(a, b) { return Math.random() * (b - a) + a; }
-
-  function makeParticle() {
-    return {
-      x: rand(0, W), y: rand(0, H),
-      r: rand(3, 10),
-      dx: rand(-0.3, 0.3), dy: rand(-0.5, -0.1),
-      alpha: rand(0.08, 0.35),
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      wobble: rand(0, Math.PI * 2),
-      wobbleSpeed: rand(0.005, 0.02),
-    };
-  }
-
-  for (let i = 0; i < 55; i++) particles.push(makeParticle());
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => {
-      p.wobble += p.wobbleSpeed;
-      p.x += p.dx + Math.sin(p.wobble) * 0.3;
-      p.y += p.dy;
-      if (p.y + p.r < 0) { p.y = H + p.r; p.x = rand(0, W); }
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color + p.alpha + ')';
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
 
 /* ── Typewriter ── */
 (function() {
