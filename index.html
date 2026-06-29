@@ -119,9 +119,8 @@
   }
   .nav-item:hover { background: var(--accent-pale); color: var(--accent); }
   .nav-item.active {
-    background: linear-gradient(135deg, #f0e4d4, #eedfc9);
+    background: var(--accent-pale);
     color: var(--accent); font-weight: 600;
-    box-shadow: 0 1px 4px rgba(139,107,74,0.10);
   }
   .nav-item i { font-size: 16px; width: 18px; flex-shrink: 0; }
   .nav-badge {
@@ -171,22 +170,22 @@
   .btn {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 8px 16px; border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-size: 15px; font-weight: 600; cursor: pointer;
     border: 1px solid var(--border-md);
     background: transparent; color: var(--text);
     transition: all 0.15s;
     font-family: 'Noto Sans KR', sans-serif;
   }
   .btn:hover { background: var(--surface2); border-color: var(--accent-light); }
-  .btn-primary { background: linear-gradient(135deg, #c4956a, #8B6B4A); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(139,107,74,0.30); }
-  .btn-primary:hover { background: linear-gradient(135deg, #d4a57a, #9b7b5a); box-shadow: 0 4px 12px rgba(139,107,74,0.40); transform: translateY(-1px); }
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
-  .btn-success { background: linear-gradient(135deg, #7ab648, #5a8f2e); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(90,143,46,0.25); }
-  .btn-success:hover { background: linear-gradient(135deg, #8ac658, #6a9f3e); }
-  .btn-danger { background: linear-gradient(135deg, #e86060, #c0392b); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(192,57,43,0.25); }
-  .btn-danger:hover { background: linear-gradient(135deg, #f07070, #d0493b); }
+  .btn-primary { background: #8B6B4A; color: #fff; border-color: #8B6B4A; }
+  .btn-primary:hover { background: #7a5c3d; border-color: #7a5c3d; }
+  .btn-sm { padding: 5px 12px; font-size: 14px; }
+  .btn-success { background: #5a8f2e; color: #fff; border-color: #5a8f2e; }
+  .btn-success:hover { background: #4a7a24; border-color: #4a7a24; }
+  .btn-danger { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .btn-danger:hover { background: #a93226; border-color: #a93226; }
   .btn-ghost { border-color: transparent; color: var(--text-muted); box-shadow: none; }
-  .btn-ghost:hover { background: var(--surface2); color: var(--accent); transform: none; box-shadow: none; }
+  .btn-ghost:hover { background: var(--surface2); color: var(--accent); }
 
   /* ── Filter bar ── */
   .filter-bar {
@@ -199,7 +198,7 @@
     cursor: pointer; color: var(--text-muted);
     transition: all 0.15s; font-family: 'Noto Sans KR', sans-serif;
   }
-  .filter-btn.active { background: linear-gradient(135deg, #c4956a, #8B6B4A); color: #fff; border-color: transparent; box-shadow: 0 2px 6px rgba(139,107,74,0.28); }
+  .filter-btn.active { background: #8B6B4A; color: #fff; border-color: #8B6B4A; }
   .filter-btn:hover:not(.active) { border-color: var(--accent-light); color: var(--accent); background: var(--accent-pale); }
 
   /* ── Cards ── */
@@ -472,16 +471,12 @@
   .landing-cta {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 16px 32px; border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, #c4956a, #8B6B4A);
-    color: #fff; font-size: 15px; font-weight: 700;
+    background: #8B6B4A;
+    color: #fff; font-size: 17px; font-weight: 700;
     border: none; cursor: pointer; letter-spacing: -0.2px;
-    box-shadow: 0 8px 24px rgba(139,107,74,0.35);
     transition: all 0.2s; font-family: 'Noto Sans KR', sans-serif;
   }
-  .landing-cta:hover {
-    box-shadow: 0 12px 32px rgba(139,107,74,0.45);
-    transform: translateY(-2px);
-  }
+  .landing-cta:hover { background: #7a5c3d; transform: translateY(-2px); }
   .landing-cta i { font-size: 18px; transition: transform 0.2s; }
   .landing-cta:hover i { transform: translateX(4px); }
 
