@@ -569,7 +569,12 @@
       <!-- 레퍼런스 -->
       <div id="csec-reference" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <p style="font-size:13px;color:var(--text-muted);">이미지 URL을 등록하여 레퍼런스를 수집하세요</p>
+          <div style="display:flex;gap:4px;">
+            <button class="filter-btn active" id="rtab-all"    onclick="setRefCat('all',this)">전체</button>
+            <button class="filter-btn" id="rtab-banner"  onclick="setRefCat('배너',this)"><i class="ti ti-layout-bottombar" style="font-size:12px"></i> 배너</button>
+            <button class="filter-btn" id="rtab-detail"  onclick="setRefCat('상세페이지',this)"><i class="ti ti-file-description" style="font-size:12px"></i> 상세페이지</button>
+            <button class="filter-btn" id="rtab-ad"      onclick="setRefCat('광고',this)"><i class="ti ti-speakerphone" style="font-size:12px"></i> 광고</button>
+          </div>
           <button class="btn btn-primary btn-sm" onclick="openRefModal()"><i class="ti ti-plus"></i> 레퍼런스 추가</button>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="ref-tag-bar"></div>
@@ -755,6 +760,15 @@
     <div class="modal-header">
       <span class="modal-title"><i class="ti ti-photo" style="margin-right:6px"></i>레퍼런스 추가</span>
       <button class="btn btn-ghost btn-sm" onclick="closeRefModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">카테고리 *</label>
+      <div style="display:flex;gap:6px;">
+        <button class="filter-btn active" id="rcat-banner"  onclick="selectRefCat('배너',this)"><i class="ti ti-layout-bottombar" style="font-size:12px"></i> 배너</button>
+        <button class="filter-btn" id="rcat-detail"  onclick="selectRefCat('상세페이지',this)"><i class="ti ti-file-description" style="font-size:12px"></i> 상세페이지</button>
+        <button class="filter-btn" id="rcat-ad"      onclick="selectRefCat('광고',this)"><i class="ti ti-speakerphone" style="font-size:12px"></i> 광고</button>
+      </div>
+      <input type="hidden" id="ref-category" value="배너" />
     </div>
     <div class="form-group">
       <label class="form-label">이미지 URL *</label>
@@ -1075,6 +1089,7 @@ function toast(msg) {
 let competitors = JSON.parse(localStorage.getItem('competitors') || '[]');
 let references  = JSON.parse(localStorage.getItem('references')  || '[]');
 let refTagFilter = '';
+let refCatFilter = 'all';
 
 function saveComp() { localStorage.setItem('competitors', JSON.stringify(competitors)); }
 function saveRef()  { localStorage.setItem('references',  JSON.stringify(references)); }
@@ -1207,8 +1222,25 @@ function renderCompetitors() {
 }
 
 /* References */
+function selectRefCat(val, btn) {
+  document.getElementById('ref-category').value = val;
+  ['rcat-banner','rcat-detail','rcat-ad'].forEach(id => document.getElementById(id).classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setRefCat(cat, btn) {
+  refCatFilter = cat;
+  document.querySelectorAll('#rtab-all,#rtab-banner,#rtab-detail,#rtab-ad').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  refTagFilter = '';
+  renderReferences();
+}
+
 function openRefModal() {
   ['ref-img','ref-title','ref-url','ref-tags','ref-memo'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ref-category').value = '배너';
+  ['rcat-banner','rcat-detail','rcat-ad'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('rcat-banner').classList.add('active');
   document.getElementById('ref-preview-wrap').style.display = 'none';
   document.getElementById('ref-modal-overlay').classList.add('open');
 }
@@ -1228,6 +1260,7 @@ function addReference() {
   references.unshift({
     id: Date.now(),
     img,
+    category: document.getElementById('ref-category').value || '배너',
     title: document.getElementById('ref-title').value.trim(),
     url: document.getElementById('ref-url').value.trim(),
     tags: tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
@@ -1248,13 +1281,17 @@ function setRefTag(tag) {
   renderReferences();
 }
 
+const REF_CAT_COLOR = { '배너':'#E6F1FB', '상세페이지':'#EAF3DE', '광고':'#FAEEDA' };
+const REF_CAT_TC    = { '배너':'#0C447C', '상세페이지':'#27500A', '광고':'#633806' };
+
 function renderReferences() {
-  const allTags = [...new Set(references.flatMap(r => r.tags))];
+  let base = refCatFilter === 'all' ? references : references.filter(r => r.category === refCatFilter);
+  const allTags = [...new Set(base.flatMap(r => r.tags))];
   document.getElementById('ref-tag-bar').innerHTML = allTags.map(t =>
     `<button class="filter-btn ${refTagFilter===t?'active':''}" onclick="setRefTag('${t}')" style="border-radius:99px;">${t}</button>`
   ).join('');
 
-  const list = refTagFilter ? references.filter(r => r.tags.includes(refTagFilter)) : references;
+  const list = refTagFilter ? base.filter(r => r.tags.includes(refTagFilter)) : base;
   const grid = document.getElementById('ref-grid');
   if(!list.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="ti ti-photo"></i>레퍼런스를 추가해보세요</div>`;
@@ -1267,7 +1304,10 @@ function renderReferences() {
         ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
       </div>
       <div style="padding:10px 12px;">
-        ${r.title ? `<div style="font-size:13px;font-weight:500;margin-bottom:4px;">${r.title}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          ${r.category ? `<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;background:${REF_CAT_COLOR[r.category]||'#f0efe9'};color:${REF_CAT_TC[r.category]||'#444'}">${r.category}</span>` : ''}
+          ${r.title ? `<span style="font-size:13px;font-weight:500;">${r.title}</span>` : ''}
+        </div>
         ${r.tags.length ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${r.tags.map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:#EEEDFE;color:#3C3489;">${t}</span>`).join('')}</div>` : ''}
         ${r.memo ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${r.memo}</div>` : ''}
         <div style="margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
