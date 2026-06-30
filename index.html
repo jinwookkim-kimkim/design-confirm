@@ -882,58 +882,95 @@
 
       <!-- AI 인사이트 -->
       <div id="csec-ai" style="display:none;">
-        <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-          <i class="ti ti-robot" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
-          <div>
-            <div style="font-size:13px;font-weight:500;color:#3C3489;">AI에게 시장 분석을 맡기세요</div>
-            <div style="font-size:12px;color:#534AB7;margin-top:2px;">아래 버튼 중 하나를 누르거나 직접 질문하면 Claude AI가 한국 화장품 시장과 등록한 타사 제품을 바탕으로 분석해줍니다. API 키는 설정에서 등록하세요.</div>
+
+        <!-- AI 서브탭 -->
+        <div style="display:flex;gap:6px;margin-bottom:18px;border-bottom:0.5px solid var(--border);padding-bottom:12px;">
+          <button class="filter-btn active" id="aitab-ref" onclick="aiTab('ref',this)"><i class="ti ti-search" style="font-size:12px"></i> 레퍼런스 탐색</button>
+          <button class="filter-btn" id="aitab-insight" onclick="aiTab('insight',this)"><i class="ti ti-chart-dots" style="font-size:12px"></i> 디자인 인사이트</button>
+        </div>
+
+        <!-- 레퍼런스 탐색 -->
+        <div id="aisec-ref">
+          <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+            <i class="ti ti-sparkles" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:#3C3489;">AI가 레퍼런스와 브랜드를 찾아드립니다</div>
+              <div style="font-size:12px;color:#534AB7;margin-top:2px;">작업 주제를 입력하면 참고할 브랜드·검색 키워드·링크를 자동으로 제안해드립니다.</div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;">
+            <label class="form-label" style="margin-bottom:8px;"><i class="ti ti-pencil" style="margin-right:4px"></i>작업 주제 또는 키워드</label>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <input class="form-control" id="ref-search-q" placeholder="예: 미니멀 스킨케어 패키징, 20대 여성 세럼 배너" style="flex:1" />
+              <button class="btn btn-primary" onclick="runRefSearch()" style="flex-shrink:0;background:#7F77DD;border-color:#7F77DD;"><i class="ti ti-search"></i> 탐색</button>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span style="font-size:11px;color:var(--text-hint);align-self:center;">빠른 예시:</span>
+              <button class="filter-btn" onclick="document.getElementById('ref-search-q').value=this.textContent.trim();runRefSearch()" style="font-size:11px;padding:3px 10px;border-radius:99px;">클린뷰티 패키지</button>
+              <button class="filter-btn" onclick="document.getElementById('ref-search-q').value=this.textContent.trim();runRefSearch()" style="font-size:11px;padding:3px 10px;border-radius:99px;">럭셔리 스킨케어</button>
+              <button class="filter-btn" onclick="document.getElementById('ref-search-q').value=this.textContent.trim();runRefSearch()" style="font-size:11px;padding:3px 10px;border-radius:99px;">SNS 배너 디자인</button>
+              <button class="filter-btn" onclick="document.getElementById('ref-search-q').value=this.textContent.trim();runRefSearch()" style="font-size:11px;padding:3px 10px;border-radius:99px;">K뷰티 브랜딩</button>
+            </div>
+          </div>
+          <div id="ref-search-result" style="display:none;margin-bottom:14px;"></div>
+          <div style="background:var(--surface2);border-radius:var(--radius-md);padding:12px 16px;display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-key" style="color:var(--text-hint);flex-shrink:0"></i>
+            <p style="font-size:12px;color:var(--text-muted);">Claude API 키가 필요합니다 → <b onclick="navigate('settings')" style="cursor:pointer;color:var(--accent)">설정에서 등록</b> &nbsp;·&nbsp; 발급: <a href="https://console.anthropic.com" target="_blank" style="color:#534AB7">console.anthropic.com</a></p>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
-          <button onclick="runAI('trend')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
-            <i class="ti ti-trending-up" style="font-size:20px;color:#639922;display:block;margin-bottom:8px"></i>
-            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">트렌드 분석</div>
-            <div style="font-size:12px;color:var(--text-muted);">2024~2025 K-뷰티 트렌드 요약</div>
-          </button>
-          <button onclick="runAI('competitor')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
-            <i class="ti ti-building-store" style="font-size:20px;color:#378ADD;display:block;margin-bottom:8px"></i>
-            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">경쟁사 분석</div>
-            <div style="font-size:12px;color:var(--text-muted);">등록한 타사 제품 강약점 비교</div>
-          </button>
-          <button onclick="runAI('design')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
-            <i class="ti ti-palette" style="font-size:20px;color:#7F77DD;display:block;margin-bottom:8px"></i>
-            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">디자인 방향 제안</div>
-            <div style="font-size:12px;color:var(--text-muted);">레퍼런스 기반 패키징·비주얼 방향</div>
-          </button>
-          <button onclick="runAI('target')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
-            <i class="ti ti-target" style="font-size:20px;color:#D85A30;display:block;margin-bottom:8px"></i>
-            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">타겟 소비자 분석</div>
-            <div style="font-size:12px;color:var(--text-muted);">연령·라이프스타일별 구매 행동</div>
-          </button>
-        </div>
-
-        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;">
-          <label class="form-label" style="margin-bottom:8px;"><i class="ti ti-message" style="margin-right:4px"></i>직접 질문하기</label>
-          <div style="display:flex;gap:8px;">
-            <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" style="flex:1" />
-            <button class="btn btn-primary" onclick="runAI('custom')" style="flex-shrink:0"><i class="ti ti-send"></i> 분석</button>
+        <!-- 디자인 인사이트 -->
+        <div id="aisec-insight" style="display:none;">
+          <div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+            <i class="ti ti-robot" style="font-size:20px;color:#3C3489;flex-shrink:0"></i>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:#3C3489;">AI 디자인 인사이트</div>
+              <div style="font-size:12px;color:#534AB7;margin-top:2px;">등록한 레퍼런스·타사 제품을 바탕으로 디자인 방향을 분석해드립니다.</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+            <button onclick="runAI('design')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+              <i class="ti ti-palette" style="font-size:20px;color:#7F77DD;display:block;margin-bottom:8px"></i>
+              <div style="font-size:13px;font-weight:500;margin-bottom:3px;">디자인 방향 제안</div>
+              <div style="font-size:12px;color:var(--text-muted);">레퍼런스 기반 패키징·비주얼 방향</div>
+            </button>
+            <button onclick="runAI('competitor')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+              <i class="ti ti-building-store" style="font-size:20px;color:#378ADD;display:block;margin-bottom:8px"></i>
+              <div style="font-size:13px;font-weight:500;margin-bottom:3px;">타사 디자인 비교</div>
+              <div style="font-size:12px;color:var(--text-muted);">등록한 타사 제품 디자인 강약점</div>
+            </button>
+            <button onclick="runAI('trend')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+              <i class="ti ti-trending-up" style="font-size:20px;color:#639922;display:block;margin-bottom:8px"></i>
+              <div style="font-size:13px;font-weight:500;margin-bottom:3px;">트렌드 분析</div>
+              <div style="font-size:12px;color:var(--text-muted);">2024~2025 K-뷰티 디자인 트렌드</div>
+            </button>
+            <button onclick="runAI('target')" style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:left;cursor:pointer;transition:border-color 0.1s;" onmouseover="this.style.borderColor='var(--border-md)'" onmouseout="this.style.borderColor='var(--border)'">
+              <i class="ti ti-target" style="font-size:20px;color:#D85A30;display:block;margin-bottom:8px"></i>
+              <div style="font-size:13px;font-weight:500;margin-bottom:3px;">타겟 소비자 分析</div>
+              <div style="font-size:12px;color:var(--text-muted);">연령·라이프스타일별 디자인 선호</div>
+            </button>
+          </div>
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;">
+            <label class="form-label" style="margin-bottom:8px;"><i class="ti ti-message" style="margin-right:4px"></i>직접 질문하기</label>
+            <div style="display:flex;gap:8px;">
+              <input class="form-control" id="ai-custom-q" placeholder="예: 비건 화장품 패키징 트렌드를 알려줘" style="flex:1" />
+              <button class="btn btn-primary" onclick="runAI('custom')" style="flex-shrink:0"><i class="ti ti-send"></i> 분析</button>
+            </div>
+          </div>
+          <div id="ai-result-wrap" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:14px;color:#3C3489;"><i class="ti ti-robot"></i></div>
+              <span style="font-size:13px;font-weight:500;">AI 分析 결과</span>
+              <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;margin-left:4px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 分析 중...</span>
+            </div>
+            <div id="ai-result" style="font-size:14px;line-height:1.9;color:var(--text);white-space:pre-wrap;"></div>
+          </div>
+          <div style="background:var(--surface2);border-radius:var(--radius-md);padding:12px 16px;margin-top:12px;display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-key" style="color:var(--text-hint);flex-shrink:0"></i>
+            <p style="font-size:12px;color:var(--text-muted);">AI 기능은 <b>설정 → Claude API 키</b>를 등록해야 작동합니다. 발급: <a href="https://console.anthropic.com" target="_blank" style="color:#534AB7">console.anthropic.com</a></p>
           </div>
         </div>
 
-        <div id="ai-result-wrap" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-            <div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:14px;color:#3C3489;"><i class="ti ti-robot"></i></div>
-            <span style="font-size:13px;font-weight:500;">AI 분석 결과</span>
-            <span id="ai-loading" style="font-size:12px;color:var(--text-muted);display:none;margin-left:4px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block"></i> 분석 중...</span>
-          </div>
-          <div id="ai-result" style="font-size:14px;line-height:1.9;color:var(--text);white-space:pre-wrap;"></div>
-        </div>
-
-        <div style="background:var(--surface2);border-radius:var(--radius-md);padding:12px 16px;margin-top:12px;display:flex;align-items:center;gap:8px;">
-          <i class="ti ti-info-circle" style="color:var(--text-hint);flex-shrink:0"></i>
-          <p style="font-size:12px;color:var(--text-muted);">AI 기능은 <b>설정 → Claude API 키</b>를 등록해야 작동합니다. API 키는 <a href="https://console.anthropic.com" target="_blank" style="color:#534AB7">console.anthropic.com</a>에서 발급받으세요.</p>
-        </div>
       </div>
     </div>
 
@@ -1943,6 +1980,94 @@ function renderReferences() {
         </div>
       </div>
     </div>`).join('');
+}
+
+/* AI Tab */
+function aiTab(name, btn) {
+  ['ref','insight'].forEach(t => {
+    document.getElementById('aisec-'+t).style.display = t===name ? '' : 'none';
+    document.getElementById('aitab-'+t).classList.toggle('active', t===name);
+  });
+}
+
+async function runRefSearch() {
+  const q = document.getElementById('ref-search-q').value.trim();
+  if(!q) { toast('주제를 입력해주세요'); return; }
+  const apiKey = localStorage.getItem('claude_api_key') || '';
+  if(!apiKey) { toast('설정에서 Claude API 키를 먼저 등록해주세요'); navigate('settings'); return; }
+
+  const wrap = document.getElementById('ref-search-result');
+  wrap.style.display = '';
+  wrap.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>AI가 레퍼런스를 탐색 중입니다...</div>';
+
+  const prompt = '당신은 한국 화장품 브랜드 디자이너를 위한 레퍼런스 탐색 전문가입니다.\n아래 주제에 맞는 디자인 레퍼런스를 찾아주세요.\n\n주제: ' + q + '\n\n다음 JSON 형식으로만 응답하세요:\n{"brands":[{"name":"브랜드명","country":"국가","desc":"디자인 특징","why":"이 주제에 맞는 이유"}],"keywords":[{"ko":"한국어 검색어","en":"English keyword","platform":"Pinterest 또는 Behance 또는 Google"}],"insight":"핵심 디자인 포인트 2~3문장"}\n\n브랜드 5개, 키워드 6개를 포함하세요.';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1400,
+        system: '디자인 레퍼런스 전문가. 반드시 순수 JSON만 출력. 마크다운 코드블록 사용 금지.',
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    if(!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || '오류 '+res.status); }
+    const data = await res.json();
+    const text = (data.content?.[0]?.text || '').trim();
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(_) {
+      const m = text.match(/\{[\s\S]*\}/);
+      if(m) parsed = JSON.parse(m[0]); else throw new Error('응답 파싱 실패');
+    }
+
+    const platformIcon  = p => p==='Behance'?'ti-brand-behance':p==='Pinterest'?'ti-brand-pinterest':'ti-search';
+    const platformColor = p => p==='Behance'?'#0057FF':p==='Pinterest'?'#E60023':'#4285F4';
+    const searchUrl = (kw, p) => {
+      if(p==='Pinterest') return 'https://www.pinterest.com/search/pins/?q='+encodeURIComponent(kw);
+      if(p==='Behance')   return 'https://www.behance.net/search/projects?search='+encodeURIComponent(kw);
+      return 'https://www.google.com/search?tbm=isch&q='+encodeURIComponent(kw);
+    };
+
+    wrap.innerHTML =
+      '<div style="margin-bottom:16px;">'
+      +'<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;"><i class="ti ti-building-store" style="margin-right:5px;color:#7F77DD"></i>참고 브랜드</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;">'
+      +(parsed.brands||[]).map(b=>
+        '<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;">'
+        +'<div style="font-size:13px;font-weight:600;margin-bottom:2px;">'+b.name+' <span style="font-size:11px;color:var(--text-hint);font-weight:400">'+b.country+'</span></div>'
+        +'<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">'+b.desc+'</div>'
+        +'<div style="font-size:11px;color:var(--accent);">'+b.why+'</div>'
+        +'<div style="margin-top:8px;display:flex;gap:6px;">'
+        +'<a href="https://www.pinterest.com/search/pins/?q='+encodeURIComponent(b.name+' packaging')+'" target="_blank" style="font-size:11px;padding:3px 8px;border-radius:99px;background:#FCEBEB;color:#E60023;text-decoration:none;"><i class="ti ti-brand-pinterest"></i> Pinterest</a>'
+        +'<a href="https://www.behance.net/search/projects?search='+encodeURIComponent(b.name)+'" target="_blank" style="font-size:11px;padding:3px 8px;border-radius:99px;background:#E6F1FB;color:#0057FF;text-decoration:none;"><i class="ti ti-brand-behance"></i> Behance</a>'
+        +'</div></div>'
+      ).join('')
+      +'</div></div>'
+      +'<div style="margin-bottom:16px;">'
+      +'<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;"><i class="ti ti-search" style="margin-right:5px;color:#639922"></i>검색 키워드</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;">'
+      +(parsed.keywords||[]).map(k=>
+        '<a href="'+searchUrl(k.en||k.ko, k.platform)+'" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-md);background:var(--surface);border:0.5px solid var(--border);text-decoration:none;">'
+        +'<i class="ti '+platformIcon(k.platform)+'" style="color:'+platformColor(k.platform)+';font-size:14px"></i>'
+        +'<div><div style="font-size:12px;font-weight:500;color:var(--text);">'+k.ko+'</div>'
+        +'<div style="font-size:10px;color:var(--text-hint);">'+k.en+' · '+k.platform+'</div></div></a>'
+      ).join('')
+      +'</div></div>'
+      +(parsed.insight
+        ? '<div style="background:#EEEDFE;border-radius:var(--radius-lg);padding:14px 18px;">'
+          +'<div style="font-size:12px;font-weight:600;color:#3C3489;margin-bottom:6px;"><i class="ti ti-bulb" style="margin-right:4px"></i>AI 디자인 포인트</div>'
+          +'<div style="font-size:13px;color:#3C3489;line-height:1.7;">'+parsed.insight+'</div></div>'
+        : '');
+  } catch(e) {
+    wrap.innerHTML = '<div style="padding:16px;color:#c0392b;font-size:13px;"><i class="ti ti-alert-circle" style="margin-right:4px"></i>오류: '+e.message+'</div>';
+  }
 }
 
 /* AI */
