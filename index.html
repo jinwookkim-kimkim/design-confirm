@@ -988,6 +988,10 @@
       <label class="form-label"><i class="ti ti-link" style="margin-right:4px"></i>기안서 주소 (URL)</label>
       <input class="form-control" id="inp-url" type="url" placeholder="https://notion.so/... 또는 구글 문서 링크" />
     </div>
+    <div class="form-group">
+      <label class="form-label"><i class="ti ti-brand-figma" style="margin-right:4px;color:#7F77DD"></i>디자인 파일 링크 (피그마 등)</label>
+      <input class="form-control" id="inp-figma" type="url" placeholder="https://figma.com/file/..." />
+    </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">기안일</label>
@@ -1134,6 +1138,27 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeRefModal()">취소</button>
       <button class="btn btn-primary" onclick="addReference()"><i class="ti ti-plus"></i> 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- Retro Modal -->
+<div class="modal-overlay" id="retro-modal-overlay" onclick="if(event.target===this)closeRetroModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-notes" style="margin-right:6px;color:#7F77DD"></i>완료 회고 작성</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeRetroModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-md);">
+      어떤 레퍼런스가 실제로 활용됐는지, 수정이 많았던 이유, 다음에 개선할 점 등을 자유롭게 기록하세요.
+    </div>
+    <div class="form-group">
+      <label class="form-label">회고 내용</label>
+      <textarea class="form-control" id="retro-text" rows="5" placeholder="예: 초반 레퍼런스 수집이 부족해 방향이 흔들렸음. 다음엔 기안 전 레퍼런스 3개 이상 확보 후 시작할 것.&#10;피그마 컴포넌트 재활용으로 작업 시간 단축됨."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeRetroModal()">취소</button>
+      <button class="btn btn-primary" onclick="submitRetro()" style="background:#7F77DD;border-color:#7F77DD;"><i class="ti ti-device-floppy"></i> 저장</button>
     </div>
   </div>
 </div>
@@ -1362,6 +1387,9 @@ function renderCard(p) {
       actions.push(`<span style="font-size:12px;color:#c0392b;font-weight:500;align-self:center;"><i class="ti ti-lock"></i> 수정 ${MAX_FB}회 완료 — 추가 변경은 새 기안으로</span>`);
     }
   }
+  if(p.status === 'done') {
+    actions.push(`<button class="btn btn-sm" onclick="openRetroModal(${p.id})" style="border-color:#7F77DD;color:#7F77DD;"><i class="ti ti-notes"></i> ${p.retro ? '회고 수정' : '완료 회고 작성'}</button>`);
+  }
   if(p.status === 'rejected') {
     actions.push(`<button class="btn btn-sm" onclick="resubmit(${p.id})"><i class="ti ti-refresh"></i> 재기안</button>`);
   }
@@ -1372,7 +1400,10 @@ function renderCard(p) {
       <div>
         <div class="card-title"><i class="ti ${statusIcon(p.status)}" style="margin-right:5px;font-size:14px"></i>${p.title}</div>
         ${p.desc ? `<div class="card-desc">${p.desc}</div>` : ''}
-        ${p.url ? `<a href="${p.url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);margin-top:5px;text-decoration:none;font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><i class="ti ti-external-link" style="font-size:12px"></i> 기안서 보기</a>` : ''}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;">
+          ${p.url ? `<a href="${p.url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);text-decoration:none;font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><i class="ti ti-external-link" style="font-size:12px"></i> 기안서 보기</a>` : ''}
+          ${p.figma ? `<a href="${p.figma}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#7F77DD;text-decoration:none;font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><i class="ti ti-brand-figma" style="font-size:12px"></i> 디자인 파일</a>` : ''}
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
         ${p.urgency && p.urgency !== 'normal' ? `<span style="font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;background:${URGENCY[p.urgency]?.bg};color:${URGENCY[p.urgency]?.color}">${URGENCY[p.urgency]?.emoji} ${URGENCY[p.urgency]?.label}</span>` : ''}
@@ -1383,6 +1414,11 @@ function renderCard(p) {
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor(p.status)}"></div></div>
     </div>
     <div class="meta-row">${chips.join('')}</div>
+    ${p.retro ? `
+    <div style="margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px;">
+      <div style="font-size:12px;font-weight:600;color:#7F77DD;margin-bottom:4px;"><i class="ti ti-notes" style="margin-right:4px"></i>완료 회고</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;background:var(--surface2);border-radius:var(--radius-md);padding:8px 12px;">${p.retro}</div>
+    </div>` : ''}
     ${(p.feedbacks && p.feedbacks.length) ? `
     <div style="margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
       ${p.feedbacks.map((f,i) => `
@@ -1493,6 +1529,7 @@ function openModal() {
   document.getElementById('inp-title').value = '';
   document.getElementById('inp-desc').value = '';
   document.getElementById('inp-url').value = '';
+  document.getElementById('inp-figma').value = '';
   document.getElementById('inp-author').value = '';
   document.getElementById('inp-deadline').value = '';
   document.getElementById('inp-category').value = '';
@@ -1510,6 +1547,7 @@ function editProposal(id) {
   document.getElementById('inp-title').value = p.title || '';
   document.getElementById('inp-desc').value = p.desc || '';
   document.getElementById('inp-url').value = p.url || '';
+  document.getElementById('inp-figma').value = p.figma || '';
   document.getElementById('inp-author').value = p.author || '';
   document.getElementById('inp-date').value = p.date || '';
   document.getElementById('inp-deadline').value = p.deadline || '';
@@ -1523,7 +1561,7 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
 
 document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') { closeModal(); closeCompModal(); closeRefModal(); closeFbModal(); }
+  if(e.key === 'Escape') { closeModal(); closeCompModal(); closeRefModal(); closeFbModal(); closeRetroModal(); }
 });
 
 function submitProposal() {
@@ -1538,6 +1576,7 @@ function submitProposal() {
         title,
         desc: document.getElementById('inp-desc').value.trim(),
         url: document.getElementById('inp-url').value.trim(),
+        figma: document.getElementById('inp-figma').value.trim(),
         author: document.getElementById('inp-author').value.trim(),
         date: document.getElementById('inp-date').value,
         deadline: document.getElementById('inp-deadline').value,
@@ -1555,13 +1594,14 @@ function submitProposal() {
     title,
     desc: document.getElementById('inp-desc').value.trim(),
     url: document.getElementById('inp-url').value.trim(),
+    figma: document.getElementById('inp-figma').value.trim(),
     author: document.getElementById('inp-author').value.trim(),
     date: document.getElementById('inp-date').value,
     deadline: document.getElementById('inp-deadline').value,
     category: document.getElementById('inp-category').value,
     urgency: document.getElementById('inp-urgency').value || 'normal',
     status: 'pending',
-    approvedAt: null, designStart: null, designEnd: null, feedbacks: [],
+    approvedAt: null, designStart: null, designEnd: null, feedbacks: [], retro: '',
   });
   save(); closeModal(); renderAll();
   toast('기안이 제출되었습니다');
@@ -1593,6 +1633,28 @@ function del(id) {
   if(!confirm('삭제하시겠습니까?')) return;
   proposals = proposals.filter(x => x.id!==id);
   save(); renderAll(); toast('삭제되었습니다');
+}
+
+let retroTargetId = null;
+function openRetroModal(id) {
+  const p = proposals.find(x => x.id === id);
+  if(!p) return;
+  retroTargetId = id;
+  document.getElementById('retro-text').value = p.retro || '';
+  document.getElementById('retro-modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('retro-text').focus(), 100);
+}
+function closeRetroModal() {
+  document.getElementById('retro-modal-overlay').classList.remove('open');
+  retroTargetId = null;
+}
+function submitRetro() {
+  const text = document.getElementById('retro-text').value.trim();
+  const p = proposals.find(x => x.id === retroTargetId);
+  if(!p) return;
+  p.retro = text;
+  save(); closeRetroModal(); renderAll();
+  toast('회고가 저장되었습니다');
 }
 
 let fbTargetId = null;
