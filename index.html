@@ -1138,6 +1138,25 @@
   </div>
 </div>
 
+<!-- Feedback Modal -->
+<div class="modal-overlay" id="fb-modal-overlay" onclick="if(event.target===this)closeFbModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><i class="ti ti-message-circle" style="margin-right:6px"></i>수정 피드백 입력</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeFbModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="fb-count-info" style="font-size:12px;color:var(--text-muted);margin-bottom:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-md);"></div>
+    <div class="form-group">
+      <label class="form-label">피드백 내용 *</label>
+      <textarea class="form-control" id="fb-text" rows="4" placeholder="수정 요청 사항을 구체적으로 입력하세요&#10;예: 타이틀 폰트를 더 크게, 배경색을 베이지로 변경"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeFbModal()">취소</button>
+      <button class="btn btn-primary" onclick="submitFeedback()"><i class="ti ti-send"></i> 피드백 전달</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1335,6 +1354,13 @@ function renderCard(p) {
   }
   if(p.status === 'designing') {
     actions.push(`<button class="btn btn-success btn-sm" onclick="endDesign(${p.id})"><i class="ti ti-circle-check"></i> 디자인 완료</button>`);
+    const fbs = p.feedbacks || [];
+    const MAX_FB = 3;
+    if(fbs.length < MAX_FB) {
+      actions.push(`<button class="btn btn-sm" onclick="openFbModal(${p.id})" style="border-color:var(--accent);color:var(--accent);"><i class="ti ti-message-circle"></i> 수정 피드백 <span style="font-size:11px;opacity:0.8">(${fbs.length}/${MAX_FB})</span></button>`);
+    } else {
+      actions.push(`<span style="font-size:12px;color:#c0392b;font-weight:500;align-self:center;"><i class="ti ti-lock"></i> 수정 ${MAX_FB}회 완료 — 추가 변경은 새 기안으로</span>`);
+    }
   }
   if(p.status === 'rejected') {
     actions.push(`<button class="btn btn-sm" onclick="resubmit(${p.id})"><i class="ti ti-refresh"></i> 재기안</button>`);
@@ -1357,6 +1383,14 @@ function renderCard(p) {
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${progressColor(p.status)}"></div></div>
     </div>
     <div class="meta-row">${chips.join('')}</div>
+    ${(p.feedbacks && p.feedbacks.length) ? `
+    <div style="margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:6px;">
+      ${p.feedbacks.map((f,i) => `
+      <div style="background:var(--surface2);border-radius:var(--radius-md);padding:8px 12px;font-size:12px;">
+        <div style="font-weight:600;color:var(--accent);margin-bottom:3px;"><i class="ti ti-message-circle" style="margin-right:4px"></i>수정 ${i+1}회 <span style="font-weight:400;color:var(--text-hint);margin-left:6px">${f.at}</span></div>
+        <div style="color:var(--text);line-height:1.5;">${f.text}</div>
+      </div>`).join('')}
+    </div>` : ''}
     <div class="card-actions">${actions.join('')}</div>
   </div>`;
 }
@@ -1489,7 +1523,7 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
 
 document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') { closeModal(); closeCompModal(); closeRefModal(); }
+  if(e.key === 'Escape') { closeModal(); closeCompModal(); closeRefModal(); closeFbModal(); }
 });
 
 function submitProposal() {
@@ -1527,7 +1561,7 @@ function submitProposal() {
     category: document.getElementById('inp-category').value,
     urgency: document.getElementById('inp-urgency').value || 'normal',
     status: 'pending',
-    approvedAt: null, designStart: null, designEnd: null,
+    approvedAt: null, designStart: null, designEnd: null, feedbacks: [],
   });
   save(); closeModal(); renderAll();
   toast('기안이 제출되었습니다');
@@ -1559,6 +1593,35 @@ function del(id) {
   if(!confirm('삭제하시겠습니까?')) return;
   proposals = proposals.filter(x => x.id!==id);
   save(); renderAll(); toast('삭제되었습니다');
+}
+
+let fbTargetId = null;
+function openFbModal(id) {
+  const p = proposals.find(x => x.id === id);
+  if(!p) return;
+  const fbs = p.feedbacks || [];
+  const MAX_FB = 3;
+  if(fbs.length >= MAX_FB) return;
+  fbTargetId = id;
+  document.getElementById('fb-count-info').innerHTML =
+    `수정 피드백 <b>${fbs.length + 1}회차 / 총 ${MAX_FB}회</b> 입력 중 &nbsp;·&nbsp; 남은 횟수: <b style="color:${fbs.length+1===MAX_FB?'#c0392b':'var(--accent)'}">${MAX_FB - fbs.length}회</b>`;
+  document.getElementById('fb-text').value = '';
+  document.getElementById('fb-modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('fb-text').focus(), 100);
+}
+function closeFbModal() {
+  document.getElementById('fb-modal-overlay').classList.remove('open');
+  fbTargetId = null;
+}
+function submitFeedback() {
+  const text = document.getElementById('fb-text').value.trim();
+  if(!text) { toast('피드백 내용을 입력하세요'); return; }
+  const p = proposals.find(x => x.id === fbTargetId);
+  if(!p) return;
+  if(!p.feedbacks) p.feedbacks = [];
+  p.feedbacks.push({ text, at: now() });
+  save(); closeFbModal(); renderAll();
+  toast(`수정 ${p.feedbacks.length}회차 피드백이 전달되었습니다`);
 }
 
 function saveSettings() {
