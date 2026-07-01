@@ -1643,7 +1643,6 @@ function editProposal(id) {
   document.getElementById('modal-submit-btn').textContent = '수정 완료';
   document.getElementById('inp-title').value = p.title || '';
   document.getElementById('inp-desc').value = p.desc || '';
-  document.getElementById('inp-url').value = p.url || '';
   document.getElementById('inp-figma').value = p.figma || '';
   document.getElementById('inp-author').value = p.author || '';
   document.getElementById('inp-date').value = p.date || '';
@@ -1672,7 +1671,6 @@ function submitProposal() {
         ...proposals[idx],
         title,
         desc: document.getElementById('inp-desc').value.trim(),
-        url: document.getElementById('inp-url').value.trim(),
         figma: document.getElementById('inp-figma').value.trim(),
         author: document.getElementById('inp-author').value.trim(),
         date: document.getElementById('inp-date').value,
@@ -1690,7 +1688,6 @@ function submitProposal() {
     id: nextId++,
     title,
     desc: document.getElementById('inp-desc').value.trim(),
-    url: document.getElementById('inp-url').value.trim(),
     figma: document.getElementById('inp-figma').value.trim(),
     author: document.getElementById('inp-author').value.trim(),
     date: document.getElementById('inp-date').value,
@@ -1774,6 +1771,10 @@ function closeFbModal() {
 }
 
 let lightboxImgUrl = '';
+function openLightboxById(id) {
+  const r = references.find(x => x.id === id);
+  if(r) openLightbox(r);
+}
 function openLightbox(r) {
   lightboxImgUrl = r.img;
   const overlay = document.getElementById('lightbox-overlay');
@@ -2184,7 +2185,7 @@ function renderReferences() {
   grid.innerHTML = list.map(r => `
     <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;break-inside:avoid;margin-bottom:12px;">
       <div style="position:relative;">
-        <img src="${r.img}" onclick="openLightbox(${JSON.stringify(r).replace(/"/g,'&quot;')})" style="width:100%;height:auto;display:block;cursor:zoom-in;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
+        <img src="${r.img}" onclick="openLightboxById(${r.id})" style="width:100%;height:auto;display:block;cursor:zoom-in;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
         ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
       </div>
       <div style="padding:10px 12px;">
