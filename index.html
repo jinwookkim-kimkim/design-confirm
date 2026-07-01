@@ -177,15 +177,15 @@
     font-family: 'Noto Sans KR', sans-serif;
   }
   .btn:hover { background: var(--surface2); border-color: var(--accent-light); }
-  .btn-primary { background: #8B6B4A; color: #fff; border-color: #8B6B4A; }
-  .btn-primary:hover { background: #7a5c3d; border-color: #7a5c3d; }
+  .btn-primary { background: #009CDE; color: #fff; border-color: #009CDE; }
+  .btn-primary:hover { background: #007fb8; border-color: #007fb8; }
   .btn-sm { padding: 5px 12px; font-size: 14px; }
-  .btn-success { background: #5a8f2e; color: #fff; border-color: #5a8f2e; }
-  .btn-success:hover { background: #4a7a24; border-color: #4a7a24; }
+  .btn-success { background: #009CDE; color: #fff; border-color: #009CDE; }
+  .btn-success:hover { background: #007fb8; border-color: #007fb8; }
   .btn-danger { background: #c0392b; color: #fff; border-color: #c0392b; }
   .btn-danger:hover { background: #a93226; border-color: #a93226; }
   .btn-ghost { border-color: transparent; color: var(--text-muted); box-shadow: none; }
-  .btn-ghost:hover { background: var(--surface2); color: var(--accent); }
+  .btn-ghost:hover { background: var(--surface2); color: #009CDE; }
 
   /* ── Filter bar ── */
   .filter-bar {
@@ -198,8 +198,8 @@
     cursor: pointer; color: var(--text-muted);
     transition: all 0.15s; font-family: 'Noto Sans KR', sans-serif;
   }
-  .filter-btn.active { background: #8B6B4A; color: #fff; border-color: #8B6B4A; }
-  .filter-btn:hover:not(.active) { border-color: var(--accent-light); color: var(--accent); background: var(--accent-pale); }
+  .filter-btn.active { background: #009CDE; color: #fff; border-color: #009CDE; }
+  .filter-btn:hover:not(.active) { border-color: #009CDE; color: #009CDE; background: #e6f6fd; }
 
   /* ── Cards ── */
   .card-list { display: flex; flex-direction: column; gap: 12px; }
@@ -1982,6 +1982,52 @@ function renderReferences() {
     </div>`).join('');
 }
 
+/* ===== LA ROSÉE BRAND DNA (브랜드 가이드 기반) ===== */
+const LRS_BRAND_DNA = `
+[라로제(LA ROSÉE) 브랜드 DNA — 디자인 레퍼런스 탐색 시 반드시 준수]
+
+■ 브랜드 본질
+- 프랑스 가족 스킨케어 브랜드 (약사 Colin & Mao 창업)
+- 핵심가치: 에센셜 케어, 불필요한 요소 제거, 효과적+감각적
+- 브랜드 에센스: Natural + Professional 균형, 지속가능한 프렌치 패밀리 스킨케어
+
+■ 브랜드 키워드
+French / Clean & Minimal / Soft Pastels / Natural Ease / Soft Brightness / Everyday Joy
+
+■ 비주얼 퍼소낼리티
+- 모던에 가까운 클래식 (과하지 않게)
+- 컬러풀한 파스텔 (탁하거나 어둡지 않게)
+- 캐주얼과 포멀의 균형 (너무 가볍지도, 무겁지도 않게)
+- 친근하지만 전문적, 조용하고 에너지를 내세우지 않음
+
+■ 컬러 시스템
+키컬러: 라로제 블루 #009CDE, 다크 그레이 #3F3F3F
+서브컬러: 그린 #00A783, 오렌지 #FF7F41, 민트 #98D1CB, 라이트블루 #98C8ED, 파스텔옐로우 #FFDC7C, 핑크 #F9B4C6, 피치 #FFC088, 골드 #FCCF61, 베이지 #f9bc87, 산딸기 #EA4772
+
+■ DO (권장)
+- 맑고 생기 있는 파스텔 톤
+- 자연광에서 부드럽게 보이는 컬러
+- 밝고 부드러운 채도 유지, 과장된 대비 없음
+- 자연스럽고 투명한 결, 이슬·수분 연상
+- 부드럽지만 단단한 아름다움, 건강하고 긍정적인 분위기
+- 시그니처 스트라이프 패턴 활용
+- 여백을 살린 레이아웃, 타이포 위계 명확화
+
+■ DON'T (금지)
+- 딥 브라운, 블랙, 카키 등 어두운 컬러 팔레트
+- 탁하고 무거운 색감, 자극적인 고채도
+- 강한 조명 대비, 드라마틱한 쉐도우
+- 메탈릭/과도한 글로시, 인위적인 CG 느낌
+- 과한 여성적/유아적 표현, 불필요한 장식
+- 트렌드 중심의 과장 연출
+
+■ 커뮤니케이션 원칙
+- 사실 중심 정보 전달, WHY 함께 설명
+- 설득보다 '대화'에 가까운 톤
+- 담백한 위트, 과도한 캐주얼 금지
+- 언니/엄마 같은 캐릭터화 금지
+`;
+
 /* AI Tab */
 function aiTab(name, btn) {
   ['ref','insight'].forEach(t => {
@@ -2000,7 +2046,7 @@ async function runRefSearch() {
   wrap.style.display = '';
   wrap.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>AI가 레퍼런스를 탐색 중입니다...</div>';
 
-  const prompt = '당신은 한국 화장품 브랜드 디자이너를 위한 레퍼런스 탐색 전문가입니다.\n아래 주제에 맞는 디자인 레퍼런스를 찾아주세요.\n\n주제: ' + q + '\n\n다음 JSON 형식으로만 응답하세요:\n{"brands":[{"name":"브랜드명","country":"국가","desc":"디자인 특징","why":"이 주제에 맞는 이유"}],"keywords":[{"ko":"한국어 검색어","en":"English keyword","platform":"Pinterest 또는 Behance 또는 Google"}],"insight":"핵심 디자인 포인트 2~3문장"}\n\n브랜드 5개, 키워드 6개를 포함하세요.';
+  const prompt = '당신은 라로제(LA ROSÉE) 브랜드 디자이너를 위한 레퍼런스 탐색 전문가입니다.\n아래 브랜드 DNA를 완벽히 이해하고, 이 결에 맞는 레퍼런스만 추천하세요.\n\n' + LRS_BRAND_DNA + '\n탐색 주제: ' + q + '\n\n다음 JSON 형식으로만 응답하세요:\n{"brands":[{"name":"브랜드명","country":"국가","desc":"디자인 특징","why":"라로제 브랜드 DNA와 맞는 이유"}],"keywords":[{"ko":"한국어 검색어","en":"English keyword","platform":"Pinterest 또는 Behance 또는 Google"}],"insight":"라로제 브랜드 결에서 이 레퍼런스를 어떻게 적용할지 2~3문장"}\n\n브랜드 5개, 키워드 6개를 포함하세요. 라로제 DON\'T 항목에 해당하는 어둡거나 과한 브랜드는 절대 추천하지 마세요.';
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2087,10 +2133,10 @@ async function runAI(type) {
     : '(등록된 레퍼런스 없음)';
 
   const PROMPTS = {
-    trend:      `한국 화장품 시장의 2024~2025년 주요 트렌드를 분석해주세요. K-뷰티, 성분, 패키징, 채널 트렌드를 포함해 실용적인 인사이트를 한국어로 작성해주세요.`,
-    competitor: `아래 타사 제품 분석 정보를 바탕으로 경쟁사 강약점과 디자인 차별화 방향을 분석해주세요.\n\n${compSummary}`,
-    design:     `아래 레퍼런스와 타사 제품 정보를 참고하여 한국 코스메틱 브랜드를 위한 패키징·비주얼 디자인 방향을 제안해주세요.\n\n[레퍼런스]\n${refSummary}\n\n[타사 제품]\n${compSummary}`,
-    target:     `한국 화장품 시장의 주요 소비자 세그먼트와 각 세그먼트별 구매 행동, 선호 브랜드 특성, 디자인 선호도를 분석해주세요.`,
+    trend:      `2024~2025년 한국 화장품 시장 트렌드 중 라로제 브랜드(프렌치 패밀리 스킨케어, 파스텔·클린 미니멀 비주얼)에 기회가 되는 트렌드를 분석해주세요. 패키징, 비주얼 커뮤니케이션, 채널별로 라로제가 어떻게 포지셔닝하면 좋을지 구체적으로 작성해주세요.`,
+    competitor: `아래 타사 제품 정보를 바탕으로 라로제의 디자인 차별화 방향을 제안해주세요. 라로제의 파스텔·클린 미니멀·프렌치 감성이 경쟁사 대비 어떤 강점을 가지는지 분석해주세요.\n\n${compSummary}`,
+    design:     `아래 레퍼런스와 타사 정보를 참고하여 라로제 브랜드 DNA(파스텔, 클린 미니멀, 프렌치, 자연스럽고 투명한 결)에 맞는 패키징·비주얼 디자인 방향을 구체적으로 제안해주세요. 라로제 DON'T(어둡거나 과한 표현)는 철저히 배제해주세요.\n\n[레퍼런스]\n${refSummary}\n\n[타사 제품]\n${compSummary}`,
+    target:     `라로제(프렌치 패밀리 스킨케어, 파스텔·클린 감성)의 핵심 타겟 소비자를 분석해주세요. 라이프스타일, 구매 동기, 선호하는 비주얼 코드, 어떤 디자인 언어로 소통해야 하는지 실용적으로 작성해주세요.`,
     custom:     document.getElementById('ai-custom-q').value.trim(),
   };
 
@@ -2117,7 +2163,7 @@ async function runAI(type) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
-        system: '당신은 한국 화장품(코스메틱) 시장 전문가이자 브랜드 디자인 컨설턴트입니다. 실용적이고 구체적인 인사이트를 제공하세요.',
+        system: '당신은 라로제(LA ROSÉE) 전담 브랜드 디자인 컨설턴트입니다. 아래 브랜드 DNA를 항상 기준으로 삼아 실용적이고 구체적인 인사이트를 제공하세요.\n\n' + LRS_BRAND_DNA,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
