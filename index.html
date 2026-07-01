@@ -814,6 +814,7 @@
         <button class="filter-btn active" id="ctab-reference" onclick="cTab('reference',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-photo" style="font-size:13px"></i> 레퍼런스 <span style="font-size:10px;color:var(--text-hint);font-weight:400">이미지 수집</span></button>
         <button class="filter-btn" id="ctab-competitor" onclick="cTab('competitor',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-building-store" style="font-size:13px"></i> 타사 분석 <span style="font-size:10px;color:var(--text-hint);font-weight:400">경쟁사 비교</span></button>
 
+        <button class="filter-btn" id="ctab-screen" onclick="cTab('screen',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-eye-check" style="font-size:13px"></i> AI 심사 <span style="font-size:10px;color:var(--text-hint);font-weight:400">브랜드 적합도 판별</span></button>
         <button class="filter-btn" id="ctab-ai" onclick="cTab('ai',this)" style="display:flex;align-items:center;gap:5px;"><i class="ti ti-robot" style="font-size:13px"></i> AI 인사이트 <span style="font-size:10px;color:var(--text-hint);font-weight:400">AI에게 물어보기</span></button>
       </div>
 
@@ -878,6 +879,42 @@
           <button class="btn btn-primary btn-sm" onclick="openCompModal()"><i class="ti ti-plus"></i> 제품 추가</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;" id="comp-grid"></div>
+      </div>
+
+      <!-- AI 심사 -->
+      <div id="csec-screen" style="display:none;">
+        <div style="max-width:600px;margin:0 auto;">
+          <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;"><i class="ti ti-eye-check" style="color:#009CDE;margin-right:6px"></i>라로제 브랜드 적합도 심사</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:18px;">이미지 URL을 입력하거나 파일을 업로드하면 AI가 라로제 브랜드 DNA 기준으로 분석해요.</div>
+
+            <!-- URL 입력 -->
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">이미지 URL</label>
+              <div style="display:flex;gap:8px;">
+                <input id="screen-url" type="text" placeholder="https://..." style="flex:1;padding:9px 13px;border:1px solid var(--border-md);border-radius:var(--radius-md);font-size:13px;background:var(--surface2);color:var(--text);font-family:'Noto Sans KR',sans-serif;" oninput="previewScreenImg()" />
+              </div>
+            </div>
+
+            <!-- 파일 업로드 -->
+            <div style="margin-bottom:18px;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px;">또는 파일 업로드</label>
+              <input id="screen-file" type="file" accept="image/*" onchange="previewScreenFile()" style="font-size:12px;color:var(--text-muted);" />
+            </div>
+
+            <!-- 미리보기 -->
+            <div id="screen-preview-wrap" style="display:none;margin-bottom:16px;border-radius:var(--radius-md);overflow:hidden;border:0.5px solid var(--border);">
+              <img id="screen-preview-img" style="width:100%;max-height:280px;object-fit:contain;display:block;background:#f5f5f5;" />
+            </div>
+
+            <button onclick="runScreenReview()" style="width:100%;padding:11px;background:#009CDE;color:#fff;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Noto Sans KR',sans-serif;">
+              <i class="ti ti-sparkles"></i> AI 심사 시작
+            </button>
+          </div>
+
+          <!-- 심사 결과 -->
+          <div id="screen-result" style="display:none;"></div>
+        </div>
       </div>
 
       <!-- AI 인사이트 -->
@@ -1808,13 +1845,139 @@ function saveRef()  { localStorage.setItem('references',  JSON.stringify(referen
 
 
 function cTab(name, btn) {
-  ['competitor','reference','ai'].forEach(t => {
+  ['competitor','reference','screen','ai'].forEach(t => {
     document.getElementById('csec-'+t).style.display = t===name ? '' : 'none';
     document.getElementById('ctab-'+t).classList.toggle('active', t===name);
   });
   if(name==='competitor') renderCompetitors();
   if(name==='reference') renderReferences();
-  if(name==='ai') {}
+}
+
+/* ── AI 심사 ── */
+let screenBase64 = '';
+let screenMediaType = '';
+
+function previewScreenImg() {
+  const url = document.getElementById('screen-url').value.trim();
+  if(!url) return;
+  screenBase64 = '';
+  document.getElementById('screen-preview-img').src = url;
+  document.getElementById('screen-preview-wrap').style.display = '';
+}
+
+function previewScreenFile() {
+  const file = document.getElementById('screen-file').files[0];
+  if(!file) return;
+  screenMediaType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = e => {
+    screenBase64 = e.target.result.split(',')[1];
+    document.getElementById('screen-preview-img').src = e.target.result;
+    document.getElementById('screen-preview-wrap').style.display = '';
+    document.getElementById('screen-url').value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runScreenReview() {
+  const apiKey = localStorage.getItem('claude_api_key') || '';
+  if(!apiKey) { toast('설정에서 Claude API 키를 먼저 등록해주세요'); navigate('settings'); return; }
+
+  const url = document.getElementById('screen-url').value.trim();
+  if(!url && !screenBase64) { toast('이미지 URL을 입력하거나 파일을 업로드해주세요'); return; }
+
+  const resultEl = document.getElementById('screen-result');
+  resultEl.style.display = '';
+  resultEl.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>AI가 라로제 브랜드 기준으로 심사 중...</div>';
+
+  const imageSource = screenBase64
+    ? { type: 'base64', media_type: screenMediaType, data: screenBase64 }
+    : { type: 'url', url };
+
+  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${LRS_BRAND_DNA}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)","category":"배너/상세페이지/SNS/광고/패키지/기타 중 하나","tags":["태그1","태그2","태그3"],"memo":"한 줄 요약"}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        system: '디자인 심사 전문가. 반드시 순수 JSON만 출력. 마크다운 코드블록 사용 금지.',
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: imageSource },
+          { type: 'text', text: prompt }
+        ]}],
+      }),
+    });
+    if(!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || '오류 '+res.status); }
+    const data = await res.json();
+    const text = (data.content?.[0]?.text || '').trim();
+    let r;
+    try { r = JSON.parse(text); } catch(_) {
+      const m = text.match(/\{[\s\S]*\}/);
+      if(m) r = JSON.parse(m[0]); else throw new Error('응답 파싱 실패');
+    }
+
+    const passColor = r.pass ? '#00A783' : '#c0392b';
+    const passIcon  = r.pass ? 'ti-circle-check' : 'ti-circle-x';
+    const passLabel = r.pass ? '통과 ✅' : '부적합 ❌';
+    const imgSrc    = screenBase64 ? `data:${screenMediaType};base64,${screenBase64}` : url;
+
+    resultEl.innerHTML = `
+      <div style="background:var(--surface);border:2px solid ${passColor};border-radius:var(--radius-lg);overflow:hidden;">
+        <div style="background:${r.pass?'#e8f8f2':'#fdeaea'};padding:14px 20px;display:flex;align-items:center;gap:10px;">
+          <i class="ti ${passIcon}" style="font-size:22px;color:${passColor}"></i>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:${passColor}">${passLabel}</div>
+            <div style="font-size:12px;color:var(--text-muted)">브랜드 적합도 점수: <strong>${r.score}/100</strong></div>
+          </div>
+        </div>
+        <img src="${imgSrc}" style="width:100%;max-height:240px;object-fit:contain;background:#f5f5f5;display:block;" />
+        <div style="padding:16px 20px;">
+          <div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px;">${r.reason}</div>
+          ${r.good ? `<div style="font-size:12px;color:#00A783;margin-bottom:6px;"><i class="ti ti-check" style="margin-right:4px"></i>${r.good}</div>` : ''}
+          ${r.bad  ? `<div style="font-size:12px;color:#c0392b;margin-bottom:12px;"><i class="ti ti-x" style="margin-right:4px"></i>${r.bad}</div>` : ''}
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+            <span style="font-size:11px;padding:3px 10px;border-radius:99px;background:#e6f6fd;color:#009CDE;font-weight:600;">${r.category}</span>
+            ${(r.tags||[]).map(t=>`<span style="font-size:11px;padding:3px 10px;border-radius:99px;background:#EEEDFE;color:#3C3489;">${t}</span>`).join('')}
+          </div>
+          <div style="display:flex;gap:8px;">
+            ${r.pass ? `<button onclick="screenToRef(${JSON.stringify({img:imgSrc,category:r.category,tags:r.tags,memo:r.memo}).replace(/"/g,'&quot;')})" style="flex:1;padding:10px;background:#009CDE;color:#fff;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;"><i class="ti ti-photo-plus"></i> 레퍼런스로 추가</button>` : ''}
+            <button onclick="downloadScreenImg('${imgSrc}')" style="padding:10px 16px;background:var(--surface2);color:var(--text);border:1px solid var(--border-md);border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;"><i class="ti ti-download"></i> 다운로드</button>
+          </div>
+        </div>
+      </div>`;
+  } catch(e) {
+    resultEl.innerHTML = `<div style="padding:16px;color:#c0392b;font-size:13px;"><i class="ti ti-alert-circle" style="margin-right:4px"></i>오류: ${e.message}</div>`;
+  }
+}
+
+function screenToRef(r) {
+  references.push({ id: Date.now(), img: r.img, title: '', url: '', category: r.category, tags: r.tags, memo: r.memo, addedAt: new Date().toLocaleDateString('ko-KR') });
+  saveRef();
+  toast('레퍼런스 보드에 추가됐어요!');
+  cTab('reference', document.getElementById('ctab-reference'));
+}
+
+async function downloadScreenImg(src) {
+  try {
+    const res = await fetch(src);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'larosee-ref-' + Date.now() + '.' + (blob.type.split('/')[1] || 'jpg');
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch(_) {
+    window.open(src, '_blank');
+    toast('직접 다운로드가 막혀있어 새 탭으로 열었어요');
+  }
 }
 
 /* Market data */
