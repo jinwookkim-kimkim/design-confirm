@@ -1270,21 +1270,29 @@
 <script>
 /* ── Landing Page ── */
 function enterApp(page) {
-  const pw = prompt('비밀번호를 입력하세요');
-  if (pw !== '0000') {
-    if (pw !== null) alert('비밀번호가 틀렸습니다.');
-    return;
+  if (!localStorage.getItem('lrs_auth')) {
+    const pw = prompt('비밀번호를 입력하세요');
+    if (pw !== '0000') {
+      if (pw !== null) alert('비밀번호가 틀렸습니다.');
+      return;
+    }
+    localStorage.setItem('lrs_auth', '1');
   }
   const landing = document.getElementById('landing');
   const appShell = document.getElementById('app-shell');
-  landing.classList.add('hide');
-  setTimeout(() => {
-    landing.style.display = 'none';
-    appShell.style.display = 'block';
-    navigate(page || 'dashboard');
-  }, 600);
+  landing.style.display = 'none';
+  appShell.style.display = 'block';
+  navigate(page || 'dashboard');
   closeSlideMenu();
 }
+
+// 새로고침 시 이미 로그인된 경우 바로 앱으로
+(function() {
+  if (localStorage.getItem('lrs_auth')) {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('app-shell').style.display = 'block';
+  }
+})();
 
 function toggleSlideMenu() {
   const menu = document.getElementById('slide-menu');
