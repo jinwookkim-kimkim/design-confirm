@@ -673,9 +673,6 @@
     </div>
   </div>
   <div class="header-right">
-    <button class="btn btn-primary btn-sm" onclick="openModal()">
-      <i class="ti ti-plus"></i> 기안 작성
-    </button>
     <div class="avatar">디</div>
   </div>
 </header>
@@ -766,6 +763,11 @@
           <h1 class="page-title">전체 기안</h1>
           <p class="page-sub" id="all-count"></p>
         </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <button class="btn btn-primary" onclick="openModal()" style="width:100%;justify-content:center;padding:11px;">
+          <i class="ti ti-plus"></i> 기안 작성
+        </button>
       </div>
       <div class="filter-bar">
         <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
