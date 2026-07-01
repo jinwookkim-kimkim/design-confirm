@@ -17,12 +17,12 @@
     --surface2: #f2ebe1;
     --border: rgba(139,107,74,0.13);
     --border-md: rgba(139,107,74,0.28);
-    --text: #2b1d0e;
-    --text-muted: #7a6047;
-    --text-hint: #b8a48e;
-    --accent: #8B6B4A;
-    --accent-light: #c4956a;
-    --accent-pale: #f0e4d4;
+    --text: #1a2f3a;
+    --text-muted: #4a7a96;
+    --text-hint: #8ab8cc;
+    --accent: #009CDE;
+    --accent-light: #4db8e8;
+    --accent-pale: #e6f6fd;
     --radius-md: 10px;
     --radius-lg: 14px;
     --radius-xl: 20px;
@@ -62,7 +62,7 @@
   }
   .logo-icon {
     width: 30px; height: 30px; border-radius: 10px;
-    background: linear-gradient(135deg, #c4956a, #8B6B4A);
+    background: linear-gradient(135deg, #4db8e8, #009CDE);
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 15px;
     box-shadow: 0 2px 6px rgba(139,107,74,0.35);
@@ -81,7 +81,7 @@
   .header-right { display: flex; align-items: center; gap: 10px; }
   .avatar {
     width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, #f0d9c4, #c4956a);
+    background: linear-gradient(135deg, #b3e0f5, #4db8e8);
     color: #fff;
     font-size: 12px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
@@ -299,7 +299,7 @@
   /* ── Toast ── */
   #toast {
     position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: linear-gradient(135deg, #c4956a, #8B6B4A); color: #fff;
+    background: linear-gradient(135deg, #4db8e8, #009CDE); color: #fff;
     border-radius: var(--radius-lg);
     padding: 11px 22px; font-size: 13px; font-weight: 500; z-index: 999;
     transition: transform 0.25s ease;
@@ -377,7 +377,7 @@
   .cal-day.has-event { background: var(--surface2); border-color: var(--border); }
   .cal-day-num { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
   .cal-day.today .cal-day-num {
-    background: linear-gradient(135deg, #c4956a, #8B6B4A); color: #fff;
+    background: linear-gradient(135deg, #4db8e8, #009CDE); color: #fff;
     width: 22px; height: 22px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
   }
@@ -419,7 +419,7 @@
   }
   .landing-logo-icon {
     width: 32px; height: 32px; border-radius: 10px;
-    background: linear-gradient(135deg, #c4956a, #8B6B4A);
+    background: linear-gradient(135deg, #4db8e8, #009CDE);
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 16px;
     box-shadow: 0 2px 8px rgba(139,107,74,0.35);
@@ -461,7 +461,7 @@
     margin-bottom: 28px;
   }
   .landing-title span {
-    background: linear-gradient(135deg, #c4956a 0%, #8B6B4A 60%);
+    background: linear-gradient(135deg, #4db8e8 0%, #009CDE 60%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
@@ -472,12 +472,12 @@
   .landing-cta {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 16px 32px; border-radius: var(--radius-lg);
-    background: #8B6B4A;
+    background: #009CDE;
     color: #fff; font-size: 17px; font-weight: 700;
     border: none; cursor: pointer; letter-spacing: -0.2px;
     transition: all 0.2s; font-family: 'Noto Sans KR', sans-serif;
   }
-  .landing-cta:hover { background: #7a5c3d; transform: translateY(-2px); }
+  .landing-cta:hover { background: #007fb8; transform: translateY(-2px); }
   .landing-cta i { font-size: 18px; transition: transform 0.2s; }
   .landing-cta:hover i { transform: translateX(4px); }
 
