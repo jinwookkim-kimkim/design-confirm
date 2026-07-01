@@ -1219,6 +1219,16 @@
   </div>
 </div>
 
+<!-- Lightbox -->
+<div id="lightbox-overlay" onclick="if(event.target===this)closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="position:absolute;top:20px;right:24px;display:flex;gap:10px;">
+    <button id="lightbox-download" onclick="downloadRef()" style="background:#009CDE;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="ti ti-download"></i> 다운로드</button>
+    <button onclick="closeLightbox()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer;"><i class="ti ti-x"></i></button>
+  </div>
+  <img id="lightbox-img" style="max-width:90vw;max-height:82vh;object-fit:contain;border-radius:12px;" />
+  <div id="lightbox-info" style="color:#fff;text-align:center;font-size:13px;opacity:0.8;max-width:600px;line-height:1.6;"></div>
+</div>
+
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -1717,6 +1727,40 @@ function closeFbModal() {
   document.getElementById('fb-modal-overlay').classList.remove('open');
   fbTargetId = null;
 }
+
+let lightboxImgUrl = '';
+function openLightbox(r) {
+  lightboxImgUrl = r.img;
+  const overlay = document.getElementById('lightbox-overlay');
+  document.getElementById('lightbox-img').src = r.img;
+  const parts = [];
+  if(r.title) parts.push('<strong>' + r.title + '</strong>');
+  if(r.category) parts.push(r.category);
+  if(r.tags && r.tags.length) parts.push(r.tags.join(' · '));
+  if(r.memo) parts.push(r.memo);
+  document.getElementById('lightbox-info').innerHTML = parts.join('<br>');
+  overlay.style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox-overlay').style.display = 'none';
+  lightboxImgUrl = '';
+}
+async function downloadRef() {
+  if(!lightboxImgUrl) return;
+  try {
+    const res = await fetch(lightboxImgUrl);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'larosee-ref-' + Date.now() + '.' + (blob.type.split('/')[1] || 'jpg');
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch(_) {
+    window.open(lightboxImgUrl, '_blank');
+    toast('직접 다운로드가 막혀있어 새 탭으로 열었어요');
+  }
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 function submitFeedback() {
   const text = document.getElementById('fb-text').value.trim();
   if(!text) { toast('피드백 내용을 입력하세요'); return; }
@@ -1969,7 +2013,7 @@ function renderReferences() {
   grid.innerHTML = list.map(r => `
     <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;break-inside:avoid;margin-bottom:12px;">
       <div style="position:relative;">
-        <img src="${r.img}" style="width:100%;height:auto;display:block;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
+        <img src="${r.img}" onclick="openLightbox(${JSON.stringify(r).replace(/"/g,'&quot;')})" style="width:100%;height:auto;display:block;cursor:zoom-in;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
         ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
       </div>
       <div style="padding:10px 12px;">
