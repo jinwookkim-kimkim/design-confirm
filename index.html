@@ -1049,6 +1049,14 @@
         </div>
         <button class="btn btn-primary" onclick="saveSettings()">저장</button>
         <div class="nav-divider" style="margin:20px 0;"></div>
+        <h3 style="font-size:14px;font-weight:500;margin-bottom:6px;"><i class="ti ti-book" style="margin-right:5px;color:#009CDE"></i>브랜드 가이드</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">AI 심사·레퍼런스 탐색 시 기준이 되는 브랜드 DNA예요. 가이드가 업데이트되면 여기서 수정하세요.</p>
+        <textarea id="setting-brand-guide" class="form-control" rows="12" style="font-size:12px;line-height:1.7;font-family:monospace;resize:vertical;" placeholder="브랜드 가이드 내용을 입력하세요..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn btn-primary btn-sm" onclick="saveBrandGuide()"><i class="ti ti-device-floppy"></i> 저장</button>
+          <button class="btn btn-sm" onclick="resetBrandGuide()" style="color:var(--text-muted);"><i class="ti ti-refresh"></i> 기본값으로 초기화</button>
+        </div>
+        <div class="nav-divider" style="margin:20px 0;"></div>
         <h3 style="font-size:14px;font-weight:500;margin-bottom:10px;">데이터 관리</h3>
         <button class="btn btn-danger btn-sm" onclick="clearAll()"><i class="ti ti-trash"></i> 전체 데이터 초기화</button>
       </div>
@@ -1601,6 +1609,9 @@ function navigate(page) {
   if(page === 'cosmetic') {
     cTab('reference', document.getElementById('ctab-reference'));
   }
+  if(page === 'settings') {
+    document.getElementById('setting-brand-guide').value = getBrandGuide();
+  }
 }
 
 function setFilter(f, btn) {
@@ -1838,7 +1849,7 @@ async function lightboxRunScreen() {
     <div style="margin-top:12px;font-size:14px;color:var(--text-muted);">AI가 라로제 브랜드 기준으로 심사 중...</div>
   </div>`;
 
-  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${LRS_BRAND_DNA}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)"}`;
+  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${getBrandGuide()}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)"}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1907,6 +1918,22 @@ function submitFeedback() {
   p.feedbacks.push({ text, at: now() });
   save(); closeFbModal(); renderAll();
   toast(`수정 ${p.feedbacks.length}회차 피드백이 전달되었습니다`);
+}
+
+function getBrandGuide() {
+  return localStorage.getItem('lrs_brand_guide') || LRS_BRAND_DNA;
+}
+function saveBrandGuide() {
+  const val = document.getElementById('setting-brand-guide').value.trim();
+  if(!val) { toast('내용을 입력해주세요'); return; }
+  localStorage.setItem('lrs_brand_guide', val);
+  toast('브랜드 가이드가 저장되었습니다');
+}
+function resetBrandGuide() {
+  if(!confirm('기본값(코드에 내장된 라로제 가이드)으로 초기화할까요?')) return;
+  localStorage.removeItem('lrs_brand_guide');
+  document.getElementById('setting-brand-guide').value = LRS_BRAND_DNA;
+  toast('기본값으로 초기화되었습니다');
 }
 
 function saveSettings() {
@@ -1994,7 +2021,7 @@ async function runScreenReview() {
     ? { type: 'base64', media_type: screenMediaType, data: screenBase64 }
     : { type: 'url', url };
 
-  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${LRS_BRAND_DNA}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)","category":"배너/상세페이지/SNS/광고/패키지/기타 중 하나","tags":["태그1","태그2","태그3"],"memo":"한 줄 요약"}`;
+  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${getBrandGuide()}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)","category":"배너/상세페이지/SNS/광고/패키지/기타 중 하나","tags":["태그1","태그2","태그3"],"memo":"한 줄 요약"}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2407,7 +2434,7 @@ async function runRefSearch() {
   wrap.style.display = '';
   wrap.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></i>AI가 레퍼런스를 탐색 중입니다...</div>';
 
-  const prompt = '당신은 라로제(LA ROSÉE) 브랜드 디자이너를 위한 레퍼런스 탐색 전문가입니다.\n아래 브랜드 DNA를 완벽히 이해하고, 이 결에 맞는 레퍼런스만 추천하세요.\n\n' + LRS_BRAND_DNA + '\n탐색 주제: ' + q + '\n\n다음 JSON 형식으로만 응답하세요:\n{"brands":[{"name":"브랜드명","country":"국가","desc":"디자인 특징","why":"라로제 브랜드 DNA와 맞는 이유"}],"keywords":[{"ko":"한국어 검색어","en":"English keyword","platform":"Pinterest 또는 Behance 또는 Google"}],"insight":"라로제 브랜드 결에서 이 레퍼런스를 어떻게 적용할지 2~3문장"}\n\n브랜드 5개, 키워드 6개를 포함하세요. 라로제 DON\'T 항목에 해당하는 어둡거나 과한 브랜드는 절대 추천하지 마세요.';
+  const prompt = '당신은 라로제(LA ROSÉE) 브랜드 디자이너를 위한 레퍼런스 탐색 전문가입니다.\n아래 브랜드 DNA를 완벽히 이해하고, 이 결에 맞는 레퍼런스만 추천하세요.\n\n' + getBrandGuide() + '\n탐색 주제: ' + q + '\n\n다음 JSON 형식으로만 응답하세요:\n{"brands":[{"name":"브랜드명","country":"국가","desc":"디자인 특징","why":"라로제 브랜드 DNA와 맞는 이유"}],"keywords":[{"ko":"한국어 검색어","en":"English keyword","platform":"Pinterest 또는 Behance 또는 Google"}],"insight":"라로제 브랜드 결에서 이 레퍼런스를 어떻게 적용할지 2~3문장"}\n\n브랜드 5개, 키워드 6개를 포함하세요. 라로제 DON\'T 항목에 해당하는 어둡거나 과한 브랜드는 절대 추천하지 마세요.';
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2524,7 +2551,7 @@ async function runAI(type) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
-        system: '당신은 라로제(LA ROSÉE) 전담 브랜드 디자인 컨설턴트입니다. 아래 브랜드 DNA를 항상 기준으로 삼아 실용적이고 구체적인 인사이트를 제공하세요.\n\n' + LRS_BRAND_DNA,
+        system: '당신은 라로제(LA ROSÉE) 전담 브랜드 디자인 컨설턴트입니다. 아래 브랜드 DNA를 항상 기준으로 삼아 실용적이고 구체적인 인사이트를 제공하세요.\n\n' + getBrandGuide(),
         messages: [{ role: 'user', content: prompt }],
       }),
     });
