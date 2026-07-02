@@ -841,6 +841,17 @@
           </div>
           <button class="btn btn-primary btn-sm" onclick="openRefModal()"><i class="ti ti-plus"></i> 레퍼런스 추가</button>
         </div>
+        <!-- 검색 + 정렬 -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="flex:1;position:relative;">
+            <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-hint);font-size:14px;pointer-events:none;"></i>
+            <input id="ref-search-input" type="text" placeholder="제목, 태그, 메모 검색..." oninput="renderReferences()" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border-md);border-radius:var(--radius-md);font-size:13px;background:var(--surface);color:var(--text);font-family:'Noto Sans KR',sans-serif;box-sizing:border-box;" />
+          </div>
+          <select id="ref-sort" onchange="renderReferences()" style="padding:8px 12px;border:1px solid var(--border-md);border-radius:var(--radius-md);font-size:12px;background:var(--surface);color:var(--text);font-family:'Noto Sans KR',sans-serif;cursor:pointer;">
+            <option value="newest">최신순</option>
+            <option value="category">카테고리순</option>
+          </select>
+        </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="ref-tag-bar"></div>
         <div style="columns:3;column-gap:12px;" id="ref-grid"></div>
       </div>
@@ -2121,15 +2132,43 @@ function setRefCat(cat, btn) {
   renderReferences();
 }
 
-function openRefModal() {
-  ['ref-img','ref-title','ref-url','ref-tags','ref-memo'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('ref-category').value = '배너';
+let editingRefId = null;
+
+function detectSource(url) {
+  if(!url) return null;
+  if(url.includes('pinterest')) return {label:'Pinterest', color:'#E60023', icon:'ti-brand-pinterest'};
+  if(url.includes('behance'))   return {label:'Behance',   color:'#0057FF', icon:'ti-brand-behance'};
+  if(url.includes('instagram')) return {label:'Instagram', color:'#E1306C', icon:'ti-brand-instagram'};
+  if(url.includes('dribbble'))  return {label:'Dribbble',  color:'#EA4C89', icon:'ti-brand-dribbble'};
+  if(url.includes('google'))    return {label:'Google',    color:'#4285F4', icon:'ti-brand-google'};
+  return {label:'출처', color:'var(--text-muted)', icon:'ti-external-link'};
+}
+
+function openRefModal(id) {
+  editingRefId = id || null;
+  const r = id ? references.find(x => x.id === id) : null;
+  document.querySelector('#ref-modal-overlay .modal-title').innerHTML =
+    `<i class="ti ti-photo" style="margin-right:6px"></i>${r ? '레퍼런스 수정' : '레퍼런스 추가'}`;
+  document.getElementById('ref-img').value   = r ? r.img   : '';
+  document.getElementById('ref-title').value = r ? r.title : '';
+  document.getElementById('ref-url').value   = r ? r.url   : '';
+  document.getElementById('ref-tags').value  = r ? r.tags.join(', ') : '';
+  document.getElementById('ref-memo').value  = r ? r.memo  : '';
+  const cat = r ? r.category : '배너';
+  document.getElementById('ref-category').value = cat;
   ['rcat-banner','rcat-detail','rcat-ad'].forEach(id => document.getElementById(id).classList.remove('active'));
-  document.getElementById('rcat-banner').classList.add('active');
-  document.getElementById('ref-preview-wrap').style.display = 'none';
+  const catMap = {'배너':'rcat-banner','상세페이지':'rcat-detail','광고':'rcat-ad'};
+  if(catMap[cat]) document.getElementById(catMap[cat]).classList.add('active');
+  else document.getElementById('rcat-banner').classList.add('active');
+  const wrap = document.getElementById('ref-preview-wrap');
+  if(r && r.img) { document.getElementById('ref-preview').src = r.img; wrap.style.display = ''; }
+  else wrap.style.display = 'none';
   document.getElementById('ref-modal-overlay').classList.add('open');
 }
-function closeRefModal() { document.getElementById('ref-modal-overlay').classList.remove('open'); }
+function closeRefModal() {
+  document.getElementById('ref-modal-overlay').classList.remove('open');
+  editingRefId = null;
+}
 
 function previewRef() {
   const url = document.getElementById('ref-img').value.trim();
@@ -2142,17 +2181,22 @@ function addReference() {
   const img = document.getElementById('ref-img').value.trim();
   if(!img) { toast('이미지 URL을 입력하세요'); return; }
   const tagsRaw = document.getElementById('ref-tags').value.trim();
-  references.unshift({
-    id: Date.now(),
+  const data = {
     img,
     category: document.getElementById('ref-category').value || '배너',
     title: document.getElementById('ref-title').value.trim(),
     url: document.getElementById('ref-url').value.trim(),
     tags: tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [],
     memo: document.getElementById('ref-memo').value.trim(),
-    addedAt: today(),
-  });
-  saveRef(); closeRefModal(); renderReferences(); toast('레퍼런스가 추가되었습니다');
+  };
+  if(editingRefId) {
+    const idx = references.findIndex(r => r.id === editingRefId);
+    if(idx !== -1) references[idx] = { ...references[idx], ...data };
+    saveRef(); closeRefModal(); renderReferences(); toast('레퍼런스가 수정되었습니다');
+  } else {
+    references.unshift({ id: Date.now(), ...data, addedAt: today() });
+    saveRef(); closeRefModal(); renderReferences(); toast('레퍼런스가 추가되었습니다');
+  }
 }
 
 function delRef(id) {
@@ -2170,7 +2214,17 @@ const REF_CAT_COLOR = { '배너':'#E6F1FB', '상세페이지':'#EAF3DE', '광고
 const REF_CAT_TC    = { '배너':'#0C447C', '상세페이지':'#27500A', '광고':'#633806' };
 
 function renderReferences() {
+  const q    = (document.getElementById('ref-search-input')?.value || '').toLowerCase();
+  const sort = document.getElementById('ref-sort')?.value || 'newest';
+
   let base = refCatFilter === 'all' ? references : references.filter(r => r.category === refCatFilter);
+  if(q) base = base.filter(r =>
+    (r.title||'').toLowerCase().includes(q) ||
+    (r.memo||'').toLowerCase().includes(q)  ||
+    r.tags.some(t => t.toLowerCase().includes(q))
+  );
+  if(sort === 'category') base = [...base].sort((a,b) => (a.category||'').localeCompare(b.category||''));
+
   const allTags = [...new Set(base.flatMap(r => r.tags))];
   document.getElementById('ref-tag-bar').innerHTML = allTags.map(t =>
     `<button class="filter-btn ${refTagFilter===t?'active':''}" onclick="setRefTag('${t}')" style="border-radius:99px;">${t}</button>`
@@ -2179,14 +2233,16 @@ function renderReferences() {
   const list = refTagFilter ? base.filter(r => r.tags.includes(refTagFilter)) : base;
   const grid = document.getElementById('ref-grid');
   if(!list.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="ti ti-photo"></i>레퍼런스를 추가해보세요</div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="ti ti-photo"></i>${q ? '검색 결과가 없어요' : '레퍼런스를 추가해보세요'}</div>`;
     return;
   }
-  grid.innerHTML = list.map(r => `
+  grid.innerHTML = list.map(r => {
+    const src = detectSource(r.url);
+    return `
     <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;break-inside:avoid;margin-bottom:12px;">
       <div style="position:relative;">
         <img src="${r.img}" onclick="openLightboxById(${r.id})" style="width:100%;height:auto;display:block;cursor:zoom-in;" onerror="this.parentElement.innerHTML='<div style=height:100px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text-hint)><i class=ti ti-photo-off style=font-size:24px></i></div>'" />
-        ${r.url ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:4px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:12px;"><i class="ti ti-external-link"></i></a>` : ''}
+        ${r.url && src ? `<a href="${r.url}" target="_blank" style="position:absolute;top:6px;right:6px;display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;background:rgba(0,0,0,0.55);color:#fff;text-decoration:none;font-size:10px;font-weight:600;"><i class="ti ${src.icon}" style="font-size:11px"></i>${src.label}</a>` : ''}
       </div>
       <div style="padding:10px 12px;">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
@@ -2197,10 +2253,14 @@ function renderReferences() {
         ${r.memo ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${r.memo}</div>` : ''}
         <div style="margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:10px;color:var(--text-hint)">${r.addedAt}</span>
-          <button class="btn btn-ghost btn-sm" onclick="delRef(${r.id})" style="padding:2px 6px;"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-ghost btn-sm" onclick="openRefModal(${r.id})" style="padding:2px 6px;"><i class="ti ti-pencil" style="font-size:12px"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="delRef(${r.id})" style="padding:2px 6px;"><i class="ti ti-trash" style="font-size:12px"></i></button>
+          </div>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 /* ===== LA ROSÉE BRAND DNA (브랜드 가이드 기반) ===== */
