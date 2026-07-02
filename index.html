@@ -1271,11 +1271,20 @@
 <!-- Lightbox -->
 <div id="lightbox-overlay" onclick="if(event.target===this)closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
   <div style="position:absolute;top:20px;right:24px;display:flex;gap:10px;">
+    <button onclick="lightboxRunScreen()" style="background:#7F77DD;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="ti ti-sparkles"></i> AI 심사</button>
     <button id="lightbox-download" onclick="downloadRef()" style="background:#009CDE;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="ti ti-download"></i> 다운로드</button>
     <button onclick="closeLightbox()" style="background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer;"><i class="ti ti-x"></i></button>
   </div>
-  <img id="lightbox-img" style="max-width:90vw;max-height:82vh;object-fit:contain;border-radius:12px;" />
+  <img id="lightbox-img" style="max-width:90vw;max-height:75vh;object-fit:contain;border-radius:12px;" />
   <div id="lightbox-info" style="color:#fff;text-align:center;font-size:13px;opacity:0.8;max-width:600px;line-height:1.6;"></div>
+</div>
+
+<!-- AI 심사 결과 팝업 -->
+<div id="screen-popup-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:var(--radius-xl);padding:28px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+    <div id="screen-popup-content"></div>
+    <button onclick="closeScreenPopup()" style="margin-top:18px;width:100%;padding:11px;background:var(--surface2);border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:var(--text);">닫기</button>
+  </div>
 </div>
 
 <!-- Toast -->
@@ -1801,6 +1810,66 @@ function openLightbox(r) {
 function closeLightbox() {
   document.getElementById('lightbox-overlay').style.display = 'none';
   lightboxImgUrl = '';
+}
+function closeScreenPopup() {
+  document.getElementById('screen-popup-overlay').style.display = 'none';
+}
+async function lightboxRunScreen() {
+  const apiKey = localStorage.getItem('claude_api_key') || '';
+  if(!apiKey) { toast('설정에서 Claude API 키를 먼저 등록해주세요'); return; }
+  if(!lightboxImgUrl) return;
+
+  const popup = document.getElementById('screen-popup-overlay');
+  const content = document.getElementById('screen-popup-content');
+  popup.style.display = 'flex';
+  content.innerHTML = `<div style="text-align:center;padding:24px 0;">
+    <i class="ti ti-loader-2" style="font-size:32px;color:#7F77DD;animation:spin 1s linear infinite;display:inline-block;"></i>
+    <div style="margin-top:12px;font-size:14px;color:var(--text-muted);">AI가 라로제 브랜드 기준으로 심사 중...</div>
+  </div>`;
+
+  const prompt = `아래 이미지를 라로제(LA ROSÉE) 브랜드 DNA 기준으로 심사해주세요.\n\n${LRS_BRAND_DNA}\n\n다음 JSON 형식으로만 응답하세요:\n{"pass":true또는false,"score":0~100,"reason":"판단 이유 2~3문장","good":"잘 맞는 점","bad":"맞지 않는 점(없으면 빈 문자열)"}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 600,
+        system: '디자인 심사 전문가. 반드시 순수 JSON만 출력. 마크다운 코드블록 사용 금지.',
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'url', url: lightboxImgUrl } },
+          { type: 'text', text: prompt }
+        ]}],
+      }),
+    });
+    if(!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || '오류 '+res.status); }
+    const data = await res.json();
+    const text = (data.content?.[0]?.text || '').trim();
+    let r;
+    try { r = JSON.parse(text); } catch(_) {
+      const m = text.match(/\{[\s\S]*\}/); if(m) r = JSON.parse(m[0]); else throw new Error('파싱 실패');
+    }
+    const passColor = r.pass ? '#00A783' : '#c0392b';
+    const passIcon  = r.pass ? 'ti-circle-check' : 'ti-circle-x';
+    const passLabel = r.pass ? '✅ 통과' : '❌ 부적합';
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:16px;">
+        <i class="ti ${passIcon}" style="font-size:40px;color:${passColor}"></i>
+        <div style="font-size:20px;font-weight:700;color:${passColor};margin-top:8px;">${passLabel}</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">브랜드 적합도 <strong style="color:${passColor}">${r.score}/100</strong></div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--radius-md);padding:14px;font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px;">${r.reason}</div>
+      ${r.good ? `<div style="font-size:12px;color:#00A783;margin-bottom:6px;display:flex;gap:6px;"><i class="ti ti-check" style="flex-shrink:0;margin-top:2px;"></i>${r.good}</div>` : ''}
+      ${r.bad  ? `<div style="font-size:12px;color:#c0392b;display:flex;gap:6px;"><i class="ti ti-x" style="flex-shrink:0;margin-top:2px;"></i>${r.bad}</div>` : ''}`;
+  } catch(e) {
+    content.innerHTML = `<div style="color:#c0392b;font-size:13px;padding:16px 0;text-align:center;"><i class="ti ti-alert-circle"></i> 오류: ${e.message}</div>`;
+  }
 }
 async function downloadRef() {
   if(!lightboxImgUrl) return;
