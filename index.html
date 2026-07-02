@@ -1050,7 +1050,20 @@
         <button class="btn btn-primary" onclick="saveSettings()">저장</button>
         <div class="nav-divider" style="margin:20px 0;"></div>
         <h3 style="font-size:14px;font-weight:500;margin-bottom:6px;"><i class="ti ti-book" style="margin-right:5px;color:#009CDE"></i>브랜드 가이드</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">AI 심사·레퍼런스 탐색 시 기준이 되는 브랜드 DNA예요. 가이드가 업데이트되면 여기서 수정하세요.</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">AI 심사·레퍼런스 탐색 시 기준이 되는 브랜드 DNA예요. PDF를 올리면 AI가 자동으로 분석해서 업데이트해요.</p>
+
+        <!-- PDF 업로드 -->
+        <div style="border:1.5px dashed var(--border-md);border-radius:var(--radius-lg);padding:18px;text-align:center;margin-bottom:14px;background:var(--surface2);">
+          <i class="ti ti-file-type-pdf" style="font-size:28px;color:#009CDE;display:block;margin-bottom:8px;"></i>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">브랜드 가이드 PDF 업로드</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">PDF를 올리면 AI가 내용을 읽고 아래 텍스트를 자동으로 업데이트해요</div>
+          <input type="file" id="brand-guide-pdf" accept=".pdf" onchange="uploadBrandGuidePdf()" style="display:none;" />
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('brand-guide-pdf').click()">
+            <i class="ti ti-upload"></i> PDF 선택
+          </button>
+          <div id="pdf-upload-status" style="margin-top:10px;font-size:12px;color:var(--text-muted);"></div>
+        </div>
+
         <textarea id="setting-brand-guide" class="form-control" rows="12" style="font-size:12px;line-height:1.7;font-family:monospace;resize:vertical;" placeholder="브랜드 가이드 내용을 입력하세요..."></textarea>
         <div style="display:flex;gap:8px;margin-top:10px;">
           <button class="btn btn-primary btn-sm" onclick="saveBrandGuide()"><i class="ti ti-device-floppy"></i> 저장</button>
@@ -1934,6 +1947,61 @@ function resetBrandGuide() {
   localStorage.removeItem('lrs_brand_guide');
   document.getElementById('setting-brand-guide').value = LRS_BRAND_DNA;
   toast('기본값으로 초기화되었습니다');
+}
+async function uploadBrandGuidePdf() {
+  const fileInput = document.getElementById('brand-guide-pdf');
+  const status = document.getElementById('pdf-upload-status');
+  const file = fileInput.files[0];
+  if (!file) return;
+  const apiKey = localStorage.getItem('claude_api_key') || '';
+  if (!apiKey) { status.innerHTML = '<span style="color:#e74c3c">⚠️ 설정에서 API 키를 먼저 입력해주세요.</span>'; return; }
+  status.innerHTML = '<span style="color:#009CDE">⏳ PDF를 읽고 있어요...</span>';
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    status.innerHTML = '<span style="color:#009CDE">🤖 AI가 브랜드 가이드 내용을 분석 중이에요...</span>';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'document',
+              source: { type: 'base64', media_type: 'application/pdf', data: base64 }
+            },
+            {
+              type: 'text',
+              text: '이 PDF는 브랜드 비주얼 가이드입니다. 다음 항목을 추출해서 AI 심사 기준으로 쓸 수 있는 텍스트로 정리해주세요:\n■ 브랜드 본질/에센스\n■ 브랜드 키워드\n■ 컬러 시스템 (키컬러, 서브컬러 hex값 포함)\n■ 타이포그래피\n■ DO (권장 비주얼 방향)\n■ DON\'T (금지 사항)\n■ 커뮤니케이션 톤\n\n형식은 아래처럼 섹션별로 정리해주세요:\n[브랜드명 브랜드 DNA]\n■ 브랜드 본질: ...\n■ 브랜드 키워드: ...\n■ 컬러 시스템: ...\n■ DO: ...\n■ DON\'T: ...\n\n한국어로 작성하고, 핵심만 간결하게 정리해주세요.'
+            }
+          ]
+        }]
+      })
+    });
+    const data = await res.json();
+    if (data.content && data.content[0]) {
+      const extracted = data.content[0].text;
+      document.getElementById('setting-brand-guide').value = extracted;
+      status.innerHTML = '<span style="color:#27ae60">✅ 추출 완료! 확인 후 저장 버튼을 눌러주세요.</span>';
+    } else {
+      status.innerHTML = '<span style="color:#e74c3c">⚠️ 추출 실패: ' + (data.error?.message || '알 수 없는 오류') + '</span>';
+    }
+  } catch(e) {
+    status.innerHTML = '<span style="color:#e74c3c">⚠️ 오류: ' + e.message + '</span>';
+  }
+  fileInput.value = '';
 }
 
 function saveSettings() {
